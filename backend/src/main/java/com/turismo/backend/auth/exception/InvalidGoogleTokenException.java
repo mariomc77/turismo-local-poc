@@ -1,5 +1,8 @@
 package com.turismo.backend.auth.exception;
 
-public class InvalidGoogleTokenException {
-    
+public class InvalidGoogleTokenException extends RuntimeException {
+
+    public InvalidGoogleTokenException(String message) {
+        super(message);
+    }
 }

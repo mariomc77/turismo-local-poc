@@ -1,5 +1,6 @@
 package com.turismo.backend.user.entity;
 
-public class Role {
-    
+public enum Role {
+    CLIENT,
+    ADMIN
 }

@@ -1,11 +1,14 @@
 package com.turismo.backend.common.handler;
 
+import com.turismo.backend.auth.exception.InvalidGoogleTokenException;
 import com.turismo.backend.common.dto.ErrorResponse;
 import com.turismo.backend.common.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -14,34 +17,61 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(
-            ResourceNotFoundException exception,
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleResourceNotFoundException(
+            ResourceNotFoundException ex,
             HttpServletRequest request
     ) {
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+        return ErrorResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(exception.getMessage())
+                .message(ex.getMessage())
                 .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
                 .build();
+    }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    @ExceptionHandler({
+            InvalidGoogleTokenException.class,
+            UsernameNotFoundException.class
+    })
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthorizedException(
+            RuntimeException ex,
+            HttpServletRequest request
+    ) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(
+            AccessDeniedException ex,
+            HttpServletRequest request
+    ) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message("Access denied")
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(
-            Exception exception,
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGeneralException(
+            Exception ex,
             HttpServletRequest request
     ) {
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+        return ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .message("Ocurrió un error inesperado")
+                .message("Internal server error")
                 .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
                 .build();
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
