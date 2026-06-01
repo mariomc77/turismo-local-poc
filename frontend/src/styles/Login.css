@@ -1,103 +1,94 @@
 .login-page {
   min-height: 100vh;
-  background: linear-gradient(120deg, #f6fbff, #ffffff);
+  background-color: #eef2f7;
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 .topbar {
-  height: 42px;
-  background: #004f9e;
+  background-color: #1a4a8a;
   color: white;
+  height: 56px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  padding: 0 22px;
-  font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .login-content {
   flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 40px 16px;
+  justify-content: center;
+  padding: 40px 24px;
 }
 
 .login-card {
-  width: 330px;
   background: white;
-  border-radius: 6px;
-  padding: 28px 26px 22px;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 32px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
-  border: 1px solid #e5e5e5;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
 }
 
 .town-icon {
-  font-size: 55px;
-  margin-bottom: 12px;
+  font-size: 3rem;
+  margin-bottom: 16px;
 }
 
 .login-card h1 {
-  color: #004f9e;
-  font-size: 21px;
-  margin-bottom: 10px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a2e4a;
+  margin-bottom: 12px;
 }
 
 .login-card p {
-  font-size: 13px;
-  color: #333;
+  color: #555;
+  font-size: 0.95rem;
   line-height: 1.5;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 
 .google-btn {
   width: 100%;
-  display: block;
-  text-decoration: none;
-  padding: 10px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: white;
   color: #333;
-  font-size: 13px;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 0.95rem;
   font-weight: 600;
-  transition: 0.2s;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  transition: 0.2s ease;
 }
 
 .google-btn:hover {
-  background: #f5f5f5;
+  background-color: #f4f4f4;
 }
 
 .google-g {
   color: #4285f4;
-  margin-left: 5px;
-  font-weight: bold;
+  font-weight: 800;
 }
 
 .login-card small {
   display: block;
-  margin-top: 12px;
-  font-size: 10px;
-  color: #555;
+  margin-top: 16px;
+  color: #777;
 }
 
 footer {
   text-align: center;
-  padding: 12px;
-  font-size: 11px;
-  background: white;
-  border-top: 1px solid #eee;
-}
-
-@media (max-width: 480px) {
-  .login-card {
-    width: 100%;
-    max-width: 330px;
-  }
-
-  .topbar {
-    justify-content: center;
-  }
+  padding: 16px;
+  color: #777;
+  background-color: #f8f9fa;
 }
