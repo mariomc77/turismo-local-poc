@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTownBySlug } from "../api/townApi";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
+import { useAuth } from "../context/AuthContext";
 import "../styles/Login.css";
 
 export default function TownLoginPage() {
   const { townSlug } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [town, setTown] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ export default function TownLoginPage() {
       try {
         const data = await getTownBySlug(townSlug);
         setTown(data);
-      } catch{
+      } catch {
         setError("No se pudo cargar la información del pueblo.");
       } finally {
         setLoading(false);
@@ -28,8 +31,15 @@ export default function TownLoginPage() {
     loadTown();
   }, [townSlug]);
 
+  useEffect(() => {
+    if (isAuthenticated && town) {
+      navigate(`/places/${town.slug}`);
+    }
+  }, [isAuthenticated, town, navigate]);
+
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
+  if (!town) return <ErrorMessage message="No se encontró información del pueblo." />;
 
   return (
     <div className="login-page">
@@ -45,16 +55,9 @@ export default function TownLoginPage() {
 
           <p>{town.description}</p>
 
-          <button
-            type="button"
-            className="google-btn"
-            onClick={() => navigate(`/places/${town.slug}`)}
-          >
-            Continuar con Google
-            <span className="google-g">G</span>
-          </button>
+          <GoogleLoginButton onSuccess={() => navigate(`/places/${town.slug}`)} />
 
-          <small>Botón temporal para la demo de Fase 1</small>
+          <small>Solo se aceptan cuentas @gmail.com</small>
         </section>
       </main>
 
