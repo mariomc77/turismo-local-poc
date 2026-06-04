@@ -15,4 +15,5 @@ public class TownResponse {
     private String description;
     private String province;
     private String country;
+    private Boolean active;
 }

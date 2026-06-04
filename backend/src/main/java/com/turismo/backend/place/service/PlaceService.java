@@ -26,9 +26,12 @@ public class PlaceService {
                 .toList();
     }
 
-    private PlaceResponse mapToResponse(Place place) {
+    public PlaceResponse mapToResponse(Place place) {
         return PlaceResponse.builder()
                 .id(place.getId())
+                .townId(place.getTown().getId())
+                .townSlug(place.getTown().getSlug())
+                .townName(place.getTown().getName())
                 .name(place.getName())
                 .description(place.getDescription())
                 .category(place.getCategory())
@@ -36,6 +39,7 @@ public class PlaceService {
                 .imageUrl(place.getImageUrl())
                 .latitude(place.getLatitude())
                 .longitude(place.getLongitude())
+                .active(place.getActive())
                 .build();
     }
 }

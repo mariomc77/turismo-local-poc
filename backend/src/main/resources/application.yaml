@@ -25,3 +25,6 @@ google:
 jwt:
   secret: 1234567890123456789012345678901234567890123456789012345678901234
   expiration-ms: 86400000
+
+frontend:
+  base-url: http://localhost:5173

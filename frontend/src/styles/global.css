@@ -1,0 +1,92 @@
+:root {
+  --primary: #38bdf8;
+  --primary-dark: #0284c7;
+  --success: #22c55e;
+  --warning: #f97316;
+  --dark: #111827;
+  --muted: #6b7280;
+  --light: #f8fafc;
+  --border: #e5e7eb;
+  --radius: 18px;
+  --shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: var(--dark);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+.place-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.place-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12) !important;
+}
+
+.qr-card {
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0 14px;
+  min-height: 48px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  color: var(--dark);
+}
+
+.search-box input::placeholder {
+  color: #9ca3af;
+}
+
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.category-filter button {
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--dark);
+  border-radius: 999px;
+  padding: 9px 17px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.category-filter button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}

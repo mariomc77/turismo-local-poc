@@ -12,7 +12,9 @@ export default function ProtectedRoute({ children }) {
 
   if (!isAuthenticated) {
     const parts = location.pathname.split("/");
-    const townSlug = parts[2] || "playas-del-coco";
+    const townSlug = location.pathname.startsWith("/places/")
+      ? parts[2] || "playas-del-coco"
+      : "playas-del-coco";
 
     return <Navigate to={`/p/${townSlug}`} replace />;
   }

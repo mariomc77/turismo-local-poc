@@ -25,6 +25,16 @@ public class TownService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
     }
 
+    public Town findTownById(Long id) {
+        return townRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
+    }
+
+    public Town findTownBySlug(String slug) {
+        return townRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
+    }
+
     private TownResponse mapToResponse(Town town) {
         return TownResponse.builder()
                 .id(town.getId())
@@ -33,6 +43,7 @@ public class TownService {
                 .description(town.getDescription())
                 .province(town.getProvince())
                 .country(town.getCountry())
+                .active(town.getActive())
                 .build();
     }
 }

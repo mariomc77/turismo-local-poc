@@ -9,5 +9,9 @@ public interface TownRepository extends JpaRepository<Town, Long> {
 
     Optional<Town> findBySlugAndActiveTrue(String slug);
 
+    Optional<Town> findBySlug(String slug);
+
     boolean existsBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

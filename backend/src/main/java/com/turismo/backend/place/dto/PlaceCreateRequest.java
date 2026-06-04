@@ -1,19 +1,15 @@
 package com.turismo.backend.place.dto;
 
 import com.turismo.backend.place.entity.PlaceCategory;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Builder
-@AllArgsConstructor
-public class PlaceResponse {
+@Setter
+public class PlaceCreateRequest {
 
-    private Long id;
     private Long townId;
     private String townSlug;
-    private String townName;
     private String name;
     private String description;
     private PlaceCategory category;

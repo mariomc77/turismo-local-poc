@@ -1,179 +1,89 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-
-const ERROR_MESSAGES = {
- "not-found": {
-   code: "404",
-   title: "Pueblo no encontrado",
-   message: "El código QR escaneado no corresponde a un pueblo registrado en el sistema.",
-   hint: "Verificá que el QR sea correcto o intentá volver al inicio.",
- },
- "session-expired": {
-   code: "401",
-   title: "Sesión expirada",
-   message: "Tu sesión venció o no se pudo validar correctamente.",
-   hint: "Iniciá sesión nuevamente con tu cuenta de Google.",
- },
- "backend-offline": {
-   code: "503",
-   title: "Servidor no disponible",
-   message: "No se pudo conectar con el backend en este momento.",
-   hint: "Revisá que el backend esté corriendo en el puerto 8080.",
- },
- unauthorized: {
-   code: "403",
-   title: "Acceso no autorizado",
-   message: "No tenés permisos para acceder a esta sección.",
-   hint: "Volvé a iniciar sesión o usá una cuenta válida.",
- },
- default: {
-   code: "404",
-   title: "Algo salió mal",
-   message: "No pudimos completar la solicitud.",
-   hint: "Podés volver al inicio o intentar nuevamente.",
- },
-};
+import { Link, useSearchParams } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function ErrorPage() {
- const navigate = useNavigate();
- const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const reason = searchParams.get("reason") || "default";
 
- const reason = searchParams.get("reason") || "default";
- const error = ERROR_MESSAGES[reason] || ERROR_MESSAGES.default;
+  const errors = {
+    "not-found": {
+      title: "Pueblo no encontrado",
+      message: "Parece que este rincón de la aventura aún no ha sido explorado o el enlace no existe.",
+      image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80"
+    },
+    "session-expired": {
+      title: "Sesión expirada",
+      message: "Tu sesión terminó por seguridad. Vuelve a iniciar sesión para continuar explorando.",
+      image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80"
+    },
+    "backend-offline": {
+      title: "Servidor no disponible",
+      message: "No pudimos conectar con el backend. Revisa que el servidor esté encendido.",
+      image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80"
+    },
+    unauthorized: {
+      title: "Acceso no autorizado",
+      message: "No tienes permisos para entrar a esta sección.",
+      image: "https://images.unsplash.com/photo-1482192505345-5655af888cc4?auto=format&fit=crop&w=1200&q=80"
+    },
+    default: {
+      title: "Algo salió mal",
+      message: "Ocurrió un error inesperado. Intentemos volver al inicio.",
+      image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80"
+    }
+  };
 
- return (
-   <div style={styles.page}>
-     <header style={styles.topbar}>
-       <span>Turismo Local UNA</span>
-     </header>
+  const currentError = errors[reason] || errors.default;
 
-     <main style={styles.content}>
-       <section style={styles.card}>
-         <div style={styles.icon}>🧭</div>
+  return (
+    <div className="min-vh-100 bg-light d-flex flex-column">
+      <Navbar townSlug="playas-del-coco" />
 
-         <h1 style={styles.code}>{error.code}</h1>
+      <main className="container flex-grow-1 d-flex align-items-center justify-content-center py-5">
+        <div className="text-center" style={{ maxWidth: 780 }}>
+          <div className="position-relative d-inline-block mb-4">
+            <img
+              src={currentError.image}
+              alt={currentError.title}
+              className="img-fluid rounded-5 shadow"
+              style={{ maxHeight: 300, width: 620, objectFit: "cover" }}
+            />
 
-         <h2 style={styles.title}>{error.title}</h2>
+            <div
+              className="position-absolute bottom-0 end-0 translate-middle-y bg-warning text-dark rounded-4 shadow d-flex align-items-center justify-content-center"
+              style={{ width: 64, height: 64, fontSize: 28 }}
+            >
+              🗺
+            </div>
+          </div>
 
-         <p style={styles.message}>{error.message}</p>
+          <h1 className="display-5 fw-bold mb-3">
+            {currentError.title}
+          </h1>
 
-         <div style={styles.warning}>
-           <span>⚠️</span>
-           <span>{error.hint}</span>
-         </div>
+          <p className="lead text-muted mb-5">
+            {currentError.message}
+          </p>
 
-         <div style={styles.actions}>
-           <button style={styles.primaryButton} onClick={() => navigate("/p/playas-del-coco")}>
-             Volver al inicio
-           </button>
+          <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
+            <Link to="/p/playas-del-coco" className="btn btn-info text-white rounded-pill px-5 py-3 fw-bold">
+              Volver al inicio
+            </Link>
 
-           <button style={styles.secondaryButton} onClick={() => window.location.reload()}>
-             Reintentar
-           </button>
-         </div>
-       </section>
-     </main>
+            <Link to="/places/playas-del-coco" className="btn btn-outline-secondary rounded-pill px-5 py-3 fw-bold">
+              Explorar lugares
+            </Link>
+          </div>
 
-     <footer style={styles.footer}>Universidad Nacional · Programación 4</footer>
-   </div>
- );
+          <p className="small text-muted mt-5">
+            ¿Crees que esto es un error? Contacta a soporte.
+          </p>
+        </div>
+      </main>
+
+      <footer className="py-4 bg-white border-top text-center text-muted small">
+        © 2026 Turismo Local POC. Costa Rica.
+      </footer>
+    </div>
+  );
 }
-
-const styles = {
- page: {
-   minHeight: "100vh",
-   backgroundColor: "#eef3f8",
-   display: "flex",
-   flexDirection: "column",
- },
- topbar: {
-   height: "56px",
-   backgroundColor: "#1a4a8a",
-   color: "#fff",
-   display: "flex",
-   alignItems: "center",
-   padding: "0 28px",
-   fontWeight: "700",
-   fontSize: "1.1rem",
-   boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
- },
- content: {
-   flex: 1,
-   display: "flex",
-   alignItems: "center",
-   justifyContent: "center",
-   padding: "40px 20px",
- },
- card: {
-   width: "100%",
-   maxWidth: "520px",
-   backgroundColor: "#fff",
-   borderRadius: "18px",
-   boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
-   padding: "34px",
-   textAlign: "center",
- },
- icon: {
-   fontSize: "3.2rem",
-   marginBottom: "8px",
- },
- code: {
-   margin: 0,
-   color: "#1a4a8a",
-   fontSize: "4.5rem",
-   fontWeight: "800",
-   lineHeight: 1,
- },
- title: {
-   margin: "12px 0 8px",
-   color: "#12345b",
-   fontSize: "1.7rem",
-   fontWeight: "800",
- },
- message: {
-   margin: 0,
-   color: "#555",
-   fontSize: "1rem",
-   lineHeight: 1.5,
- },
- warning: {
-   margin: "22px 0",
-   backgroundColor: "#fff7df",
-   color: "#7a5300",
-   borderRadius: "10px",
-   padding: "12px",
-   display: "flex",
-   justifyContent: "center",
-   gap: "8px",
-   fontSize: "0.9rem",
- },
- actions: {
-   display: "flex",
-   justifyContent: "center",
-   gap: "12px",
-   flexWrap: "wrap",
- },
- primaryButton: {
-   backgroundColor: "#1a4a8a",
-   color: "#fff",
-   border: "none",
-   borderRadius: "10px",
-   padding: "10px 18px",
-   cursor: "pointer",
-   fontWeight: "700",
- },
- secondaryButton: {
-   backgroundColor: "#fff",
-   color: "#1a4a8a",
-   border: "1px solid #1a4a8a",
-   borderRadius: "10px",
-   padding: "10px 18px",
-   cursor: "pointer",
-   fontWeight: "700",
- },
- footer: {
-   textAlign: "center",
-   padding: "18px",
-   color: "#667085",
-   backgroundColor: "#fff",
- },
-};
