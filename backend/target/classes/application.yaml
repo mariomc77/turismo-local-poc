@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/turismo_db
+    username: postgres
+    password: 123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+google:
+  client-id: 932991278703-ss4ve9l49a7f8l6aeu29fmmrhngi9dbl.apps.googleusercontent.com
+
+jwt:
+  secret: 1234567890123456789012345678901234567890123456789012345678901234
+  expiration-ms: 86400000
+
+frontend:
+  base-url: http://localhost:5173
