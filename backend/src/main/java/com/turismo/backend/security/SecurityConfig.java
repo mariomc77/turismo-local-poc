@@ -35,6 +35,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/google").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/towns/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/towns/*/places").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/towns/*/qr").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
