@@ -23,7 +23,7 @@ public class QrService {
         Town town = townRepository.findBySlugAndActiveTrue(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado"));
 
-        String qrUrl = frontendBaseUrl + "/#/p/" + town.getSlug();
+        String qrUrl = frontendBaseUrl + "/p/" + town.getSlug();
 
         return new QrResponse(
                 town.getSlug(),
