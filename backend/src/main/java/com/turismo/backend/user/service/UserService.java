@@ -33,7 +33,7 @@ public class UserService {
                 .toList();
     }
 
-    private UserResponse mapToResponse(User user) {
+    public UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .googleId(user.getGoogleId())
