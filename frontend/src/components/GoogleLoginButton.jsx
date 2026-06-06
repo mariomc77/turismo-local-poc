@@ -1,9 +1,11 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function GoogleLoginButton({ onSuccess }) {
+export default function GoogleLoginButton({ townSlug = "playas-del-coco", onSuccess }) {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
 
   async function handleSuccess(credentialResponse) {
@@ -19,7 +21,10 @@ export default function GoogleLoginButton({ onSuccess }) {
 
       if (onSuccess) {
         onSuccess();
+        return;
       }
+
+      navigate(`/places/${townSlug}`);
     } catch {
       setError("No se pudo iniciar sesión con Google.");
     }
@@ -44,11 +49,11 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "10px",
+    gap: "10px"
   },
   error: {
     color: "#c0392b",
     fontSize: "0.85rem",
-    margin: 0,
-  },
+    margin: 0
+  }
 };
