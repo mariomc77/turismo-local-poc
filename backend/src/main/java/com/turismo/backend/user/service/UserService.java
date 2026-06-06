@@ -22,18 +22,18 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        return toResponse(user);
+        return mapToResponse(user);
     }
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(User::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
-                .map(this::toResponse)
+                .map(this::mapToResponse)
                 .toList();
     }
 
-    private UserResponse toResponse(User user) {
+    private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .googleId(user.getGoogleId())
