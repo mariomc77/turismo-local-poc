@@ -47,3 +47,8 @@ export async function toggleAdminPlaceActive(id) {
 export async function deleteAdminPlace(id) {
   await api.delete(`/admin/places/${id}`);
 }
+
+export async function getAdminUsers() {
+  const response = await api.get("/admin/users");
+  return response.data;
+}

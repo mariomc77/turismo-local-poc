@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -16,5 +18,10 @@ public class UserController {
     @GetMapping("/api/users/me")
     public UserResponse getMe(Authentication authentication) {
         return userService.getCurrentUser(authentication.getName());
+    }
+
+    @GetMapping("/api/admin/users")
+    public List<UserResponse> getAdminUsers() {
+        return userService.getAllUsers();
     }
 }
