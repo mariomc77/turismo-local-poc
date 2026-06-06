@@ -10,6 +10,7 @@ import AdminPlacesPage from "../pages/AdminPlacesPage";
 import AdminUsersPage from "../pages/AdminUsersPage";
 import AdminReportsPage from "../pages/AdminReportsPage";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 export default function AppRoutes() {
   return (
@@ -29,52 +30,59 @@ export default function AppRoutes() {
 
       <Route path="/qr/:townSlug" element={<QrPage />} />
 
-      <Route path="/map/:townSlug" element={<MapPage />} />
+      <Route
+        path="/map/:townSlug"
+        element={
+          <ProtectedRoute>
+            <MapPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="/error" element={<ErrorPage />} />
 
       <Route
         path="/admin/dashboard"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminDashboardPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
 
       <Route
         path="/admin/towns"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminTownsPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
 
       <Route
         path="/admin/places"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminPlacesPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
 
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminUsersPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
 
       <Route
         path="/admin/reports"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminReportsPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
 
