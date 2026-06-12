@@ -1,6 +1,5 @@
 package com.turismo.backend.security;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/google").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/towns").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/towns/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/towns/*/places").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/towns/*/qr").permitAll()

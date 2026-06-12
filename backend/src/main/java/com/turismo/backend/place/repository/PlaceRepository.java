@@ -11,4 +11,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     List<Place> findByTownAndActiveTrue(Town town);
 
     List<Place> findByTown(Town town);
+
+    long countByTown(Town town);
 }

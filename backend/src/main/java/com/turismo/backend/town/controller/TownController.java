@@ -3,10 +3,9 @@ package com.turismo.backend.town.controller;
 import com.turismo.backend.town.dto.TownResponse;
 import com.turismo.backend.town.service.TownService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/towns")
@@ -14,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TownController {
 
     private final TownService townService;
+
+    @GetMapping
+    public List<TownResponse> getAllActiveTowns() {
+        return townService.getAllActiveTowns();
+    }
 
     @GetMapping("/{slug}")
     public TownResponse getTownBySlug(@PathVariable String slug) {

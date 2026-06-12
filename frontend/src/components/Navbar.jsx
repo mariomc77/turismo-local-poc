@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getAllTowns } from "../api/townApi";
 
 export default function Navbar({ townSlug = "playas-del-coco" }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [towns, setTowns] = useState([]);
 
+  const activeSlug = townSlug || "playas-del-coco";
   const isAdmin = user?.role === "ADMIN";
+
+  useEffect(() => {
+    const loadTowns = async () => {
+      try {
+        const data = await getAllTowns();
+        setTowns(Array.isArray(data) ? data : []);
+      } catch {
+        setTowns([]);
+      }
+    };
+
+    loadTowns();
+  }, []);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -16,8 +32,19 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
-    navigate(`/p/${townSlug}`);
+    navigate(`/p/${activeSlug}`);
     window.location.reload();
+  };
+
+  const handleTownChange = (event) => {
+    const selectedSlug = event.target.value;
+
+    if (!selectedSlug || selectedSlug === activeSlug) {
+      return;
+    }
+
+    setMenuOpen(false);
+    navigate(`/p/${selectedSlug}`);
   };
 
   return (
@@ -25,7 +52,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
       <div className="container">
         <Link
           className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info"
-          to={`/places/${townSlug}`}
+          to={`/places/${activeSlug}`}
           onClick={closeMenu}
         >
           <span
@@ -51,7 +78,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             <li className="nav-item">
               <Link
                 className="nav-link fw-semibold"
-                to={`/places/${townSlug}`}
+                to={`/places/${activeSlug}`}
                 onClick={closeMenu}
               >
                 Lugares
@@ -61,7 +88,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             <li className="nav-item">
               <Link
                 className="nav-link fw-semibold"
-                to={`/map/${townSlug}`}
+                to={`/map/${activeSlug}`}
                 onClick={closeMenu}
               >
                 Mapa
@@ -71,7 +98,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             <li className="nav-item">
               <Link
                 className="nav-link fw-semibold"
-                to={`/qr/${townSlug}`}
+                to={`/qr/${activeSlug}`}
                 onClick={closeMenu}
               >
                 Mi QR
@@ -91,10 +118,28 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             )}
           </ul>
 
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-3">
+            <select
+              className="form-select form-select-sm"
+              value={activeSlug}
+              onChange={handleTownChange}
+              style={{ maxWidth: "190px" }}
+              aria-label="Seleccionar pueblo"
+            >
+              {towns.length === 0 && (
+                <option value={activeSlug}>Pueblo actual</option>
+              )}
+
+              {towns.map((town) => (
+                <option key={town.slug} value={town.slug}>
+                  {town.name}
+                </option>
+              ))}
+            </select>
+
             {user ? (
               <>
-                <span className="text-muted">
+                <span className="text-muted d-none d-lg-inline">
                   Hola, {user.name || user.email || "Usuario"}
                 </span>
 
@@ -128,7 +173,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             ) : (
               <Link
                 className="btn btn-info text-white btn-sm"
-                to={`/p/${townSlug}`}
+                to={`/p/${activeSlug}`}
                 onClick={closeMenu}
               >
                 Empezar

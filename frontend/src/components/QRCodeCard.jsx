@@ -32,82 +32,70 @@ export default function QRCodeCard({ townName, qrUrl }) {
     const downloadLink = document.createElement("a");
     downloadLink.href = pngUrl;
     downloadLink.download = `qr-${townName.toLowerCase().replaceAll(" ", "-")}.png`;
+
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
 
   return (
-    <div className="qr-print-wrapper">
-      <div
-        className="card border-0 shadow-lg rounded-5 p-4 text-center qr-card mx-auto"
-        style={{ maxWidth: 390 }}
-      >
-        <div className="qr-poster-header">
-          <div className="qr-logo-circle">☼</div>
-          <p className="text-muted small mb-1">Turismo Local POC</p>
+    <div className="card border-0 shadow-lg rounded-4">
+      <div className="card-body p-4 text-center">
+        <div className="mb-3">
+          <span
+            className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center mb-2"
+            style={{ width: "54px", height: "54px", fontSize: "26px" }}
+          >
+            ☼
+          </span>
+
+          <h5 className="fw-bold text-info mb-0">Turismo Local POC</h5>
         </div>
 
-        <h2 className="fw-bold mb-1">Bienvenido a</h2>
+        <p className="text-muted mb-1">Bienvenido a</p>
 
-        <h3 className="text-info fw-bold text-uppercase mb-3">
-          {townName}
-        </h3>
+        <h3 className="fw-bold mb-4">{townName}</h3>
 
-        <p className="text-muted small mb-4">
-          Escanea este código QR para descubrir los mejores lugares turísticos del pueblo.
-        </p>
-
-        <div className="qr-canvas-box bg-white border rounded-4 p-4 mx-auto mb-4" ref={qrRef}>
+        <div
+          ref={qrRef}
+          className="bg-white border rounded-4 d-inline-block p-3 mb-4"
+        >
           <QRCodeCanvas
             value={qrUrl}
-            size={240}
-            bgColor="#ffffff"
-            fgColor="#1f2937"
+            size={260}
+            includeMargin={true}
             level="H"
-            includeMargin
           />
         </div>
 
-        <div className="bg-light rounded-pill px-3 py-2 small text-muted mb-4 text-truncate">
-          {qrUrl}
+        <p className="text-muted mb-3">
+          Escanea este código QR para descubrir los mejores lugares turísticos del pueblo.
+        </p>
+
+        <div className="bg-light rounded-4 p-3 mb-4">
+          <p className="small text-muted mb-1">URL:</p>
+          <p className="small fw-semibold text-break mb-0">{qrUrl}</p>
         </div>
 
-        <div className="d-grid gap-3 qr-actions">
-          <button
-            type="button"
-            className="btn btn-info text-white fw-bold rounded-3 py-3"
-            onClick={handleOpenQr}
-          >
+        <div className="d-flex flex-wrap justify-content-center gap-2">
+          <button className="btn btn-info text-white" onClick={handleOpenQr}>
             Probar QR
           </button>
 
-          <button
-            type="button"
-            className="btn btn-warning text-white fw-bold rounded-3 py-3"
-            onClick={handleDownload}
-          >
+          <button className="btn btn-outline-info" onClick={handleDownload}>
             Descargar PNG
           </button>
 
-          <button
-            type="button"
-            className="btn btn-outline-secondary fw-bold rounded-3 py-3"
-            onClick={handlePrint}
-          >
+          <button className="btn btn-outline-secondary" onClick={handlePrint}>
             Imprimir Código
           </button>
 
-          <button
-            type="button"
-            className="btn btn-light border fw-bold rounded-3 py-3"
-            onClick={handleCopy}
-          >
+          <button className="btn btn-outline-dark" onClick={handleCopy}>
             Copiar URL
           </button>
         </div>
 
-        <p className="small text-muted mt-4 mb-0 fst-italic qr-tip">
+        <p className="text-muted small mt-4 mb-0">
           Ideal para imprimir y colocar en hoteles, restaurantes o puntos turísticos.
         </p>
       </div>

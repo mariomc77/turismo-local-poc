@@ -7,5 +7,7 @@ public enum PlaceCategory {
     PASEOS,
     CULTURA,
     RESTAURANTE,
+    HOTEL,
+    ACTIVIDAD,
     OTRO
 }

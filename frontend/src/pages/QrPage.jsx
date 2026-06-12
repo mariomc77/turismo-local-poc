@@ -7,7 +7,6 @@ import { getQrByTownSlug } from "../api/qrApi";
 
 export default function QrPage() {
   const { townSlug } = useParams();
-
   const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,65 +39,73 @@ export default function QrPage() {
   const qrUrl = qrData?.qrUrl || `${window.location.origin}/p/${slug}`;
 
   return (
-    <div className="min-vh-100 bg-white qr-page">
+    <>
       <Navbar townSlug={slug} />
 
       <main className="container py-5">
-        <div
-          className="row align-items-center justify-content-center g-5"
-          style={{ minHeight: "calc(100vh - 160px)" }}
-        >
+        <section className="text-center mb-5">
+          <span className="badge rounded-pill bg-info-subtle text-info px-4 py-2 mb-3">
+            Generador de Acceso Rápido
+          </span>
+
+          <h1 className="fw-bold display-5 mb-3">
+            Código QR de <span className="text-info">{townName}</span>
+          </h1>
+
+          <p className="text-muted mx-auto" style={{ maxWidth: "760px" }}>
+            Este código QR abre directamente la página turística del pueblo.
+            Al escanearlo, el usuario entra a la pantalla de bienvenida,
+            inicia sesión con Google y luego accede a la lista de lugares turísticos.
+          </p>
+        </section>
+
+        <div className="row justify-content-center g-4">
           <div className="col-lg-6">
-            <span className="badge bg-info-subtle text-info rounded-pill px-4 py-2 mb-3">
-              Generador de Acceso Rápido
-            </span>
-
-            <h1 className="display-4 fw-bold mb-4">
-              Código QR de <span className="text-info">{townName}</span>
-            </h1>
-
-            <p className="lead text-muted mb-5">
-              Este código QR abre directamente la página turística del pueblo. Al escanearlo, el usuario entra a la pantalla de bienvenida, inicia sesión con Google y luego accede a la lista de lugares turísticos.
-            </p>
-
-            <div className="row g-3 mb-4 qr-info-boxes">
-              <div className="col-md-6">
-                <div className="card border-0 shadow-sm rounded-4 p-4 h-100">
-                  <div className="fs-3 text-success mb-2">✓</div>
-                  <h5 className="fw-bold">Listo para imprimir</h5>
-                  <p className="text-muted small mb-0">
-                    Puedes descargar el QR como imagen PNG o imprimirlo directamente.
-                  </p>
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="card border-0 shadow-sm rounded-4 p-4 h-100">
-                  <div className="fs-3 text-warning mb-2">ⓘ</div>
-                  <h5 className="fw-bold">Flujo completo</h5>
-                  <p className="text-muted small mb-0">
-                    QR → Login Google → JWT → Lugares turísticos del pueblo.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="alert alert-info rounded-4 border-0">
-              <strong>URL codificada:</strong>
-              <br />
-              <span className="small">{qrUrl}</span>
-            </div>
+            <QRCodeCard townName={townName} qrUrl={qrUrl} />
           </div>
 
           <div className="col-lg-5">
-            <QRCodeCard townName={townName} qrUrl={qrUrl} />
+            <div className="card border-0 shadow-sm rounded-4 h-100">
+              <div className="card-body p-4">
+                <div className="d-flex align-items-center gap-3 mb-4">
+                  <span className="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style={{ width: "42px", height: "42px" }}>
+                    ✓
+                  </span>
+
+                  <div>
+                    <h5 className="fw-bold mb-0">Listo para imprimir</h5>
+                    <p className="text-muted mb-0">
+                      Puedes descargar el QR como imagen PNG o imprimirlo directamente.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-center gap-3 mb-4">
+                  <span className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" style={{ width: "42px", height: "42px" }}>
+                    ⓘ
+                  </span>
+
+                  <div>
+                    <h5 className="fw-bold mb-0">Flujo completo</h5>
+                    <p className="text-muted mb-0">
+                      QR → Login Google → JWT → Lugares turísticos del pueblo.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-light rounded-4 p-3">
+                  <p className="text-muted small mb-1">URL codificada:</p>
+                  <p className="fw-semibold text-break mb-0">{qrUrl}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
 
-      <footer className="py-4 bg-white border-top text-center text-muted small">
+      <footer className="text-center py-4 text-muted">
         © 2026 Turismo Local POC. Costa Rica.
       </footer>
-    </div>
+    </>
   );
 }

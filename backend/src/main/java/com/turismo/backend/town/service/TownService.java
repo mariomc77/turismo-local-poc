@@ -7,11 +7,20 @@ import com.turismo.backend.town.repository.TownRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TownService {
 
     private final TownRepository townRepository;
+
+    public List<TownResponse> getAllActiveTowns() {
+        return townRepository.findByActiveTrueOrderByNameAsc()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
     public TownResponse getTownBySlug(String slug) {
         Town town = townRepository.findBySlugAndActiveTrue(slug)
@@ -35,7 +44,7 @@ public class TownService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
     }
 
-    public TownResponse mapToResponse(Town town) {
+    private TownResponse mapToResponse(Town town) {
         return TownResponse.builder()
                 .id(town.getId())
                 .slug(town.getSlug())
@@ -44,8 +53,6 @@ public class TownService {
                 .province(town.getProvince())
                 .country(town.getCountry())
                 .active(town.getActive())
-                .createdAt(town.getCreatedAt())
-                .updatedAt(town.getUpdatedAt())
                 .build();
     }
 }
