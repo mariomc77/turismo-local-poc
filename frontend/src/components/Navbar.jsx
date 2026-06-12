@@ -47,21 +47,27 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
     navigate(`/p/${selectedSlug}`);
   };
 
+  const userInitial =
+    user?.name?.charAt(0)?.toUpperCase() ||
+    user?.email?.charAt(0)?.toUpperCase() ||
+    "U";
+
   return (
-    <nav className="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-      <div className="container">
+    <nav className="navbar navbar-expand-xl bg-white shadow-sm sticky-top">
+      <div className="container-fluid px-3 px-lg-4">
         <Link
-          className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info"
+          className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info me-3"
           to={`/places/${activeSlug}`}
           onClick={closeMenu}
         >
           <span
-            className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center"
+            className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
             style={{ width: "44px", height: "44px", fontSize: "22px" }}
           >
             ☼
           </span>
-          Turismo Local POC
+          <span className="d-none d-sm-inline">Turismo Local POC</span>
+          <span className="d-inline d-sm-none">Turismo</span>
         </Link>
 
         <button
@@ -74,10 +80,10 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
         </button>
 
         <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}>
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4">
+          <ul className="navbar-nav mx-xl-auto mb-3 mb-xl-0 gap-xl-3 align-items-xl-center">
             <li className="nav-item">
               <Link
-                className="nav-link fw-semibold"
+                className="nav-link fw-semibold text-nowrap"
                 to={`/places/${activeSlug}`}
                 onClick={closeMenu}
               >
@@ -87,7 +93,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
 
             <li className="nav-item">
               <Link
-                className="nav-link fw-semibold"
+                className="nav-link fw-semibold text-nowrap"
                 to={`/map/${activeSlug}`}
                 onClick={closeMenu}
               >
@@ -97,7 +103,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
 
             <li className="nav-item">
               <Link
-                className="nav-link fw-semibold"
+                className="nav-link fw-semibold text-nowrap"
                 to={`/qr/${activeSlug}`}
                 onClick={closeMenu}
               >
@@ -108,7 +114,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             {isAdmin && (
               <li className="nav-item">
                 <Link
-                  className="nav-link fw-semibold text-info"
+                  className="nav-link fw-semibold text-info text-nowrap"
                   to="/admin/dashboard"
                   onClick={closeMenu}
                 >
@@ -118,12 +124,12 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             )}
           </ul>
 
-          <div className="d-flex align-items-center gap-3">
+          <div className="d-flex flex-column flex-xl-row align-items-xl-center gap-2 gap-xl-3 ms-xl-auto">
             <select
               className="form-select form-select-sm"
               value={activeSlug}
               onChange={handleTownChange}
-              style={{ maxWidth: "190px" }}
+              style={{ width: "190px", maxWidth: "100%" }}
               aria-label="Seleccionar pueblo"
             >
               {towns.length === 0 && (
@@ -138,13 +144,17 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
             </select>
 
             {user ? (
-              <>
-                <span className="text-muted d-none d-lg-inline">
+              <div className="d-flex align-items-center gap-2">
+                <span
+                  className="text-muted text-truncate d-none d-md-inline"
+                  style={{ maxWidth: "190px" }}
+                  title={user.name || user.email || "Usuario"}
+                >
                   Hola, {user.name || user.email || "Usuario"}
                 </span>
 
                 <span
-                  className="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold overflow-hidden"
+                  className="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold overflow-hidden flex-shrink-0"
                   style={{ width: "42px", height: "42px" }}
                 >
                   {user.picture ? (
@@ -159,20 +169,20 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                       }}
                     />
                   ) : (
-                    user.name?.charAt(0)?.toUpperCase() || "U"
+                    userInitial
                   )}
                 </span>
 
                 <button
-                  className="btn btn-outline-secondary btn-sm"
+                  className="btn btn-outline-secondary btn-sm text-nowrap"
                   onClick={handleLogout}
                 >
                   Salir
                 </button>
-              </>
+              </div>
             ) : (
               <Link
-                className="btn btn-info text-white btn-sm"
+                className="btn btn-info text-white btn-sm text-nowrap"
                 to={`/p/${activeSlug}`}
                 onClick={closeMenu}
               >
