@@ -42,51 +42,56 @@ export default function QrPage() {
     <>
       <Navbar townSlug={slug} />
 
-      <main className="container py-5">
-        <section className="text-center mb-5">
+      <main className="container py-4 py-lg-5">
+        <section className="text-center mb-4">
           <span className="badge rounded-pill bg-info-subtle text-info px-4 py-2 mb-3">
-            Generador de Acceso Rápido
+            Código QR por pueblo
           </span>
 
-          <h1 className="fw-bold display-5 mb-3">
-            Código QR de <span className="text-info">{townName}</span>
+          <h1 className="fw-bold mb-3">
+            QR turístico de <span className="text-info">{townName}</span>
           </h1>
 
-          <p className="text-muted mx-auto" style={{ maxWidth: "760px" }}>
-            Este código QR abre directamente la página turística del pueblo.
-            Al escanearlo, el usuario entra a la pantalla de bienvenida,
-            inicia sesión con Google y luego accede a la lista de lugares turísticos.
+          <p className="text-muted mx-auto mb-0" style={{ maxWidth: "720px" }}>
+            Este código QR abre directamente la página turística del pueblo seleccionado.
+            Cada pueblo tiene su propio QR y su propio catálogo de lugares.
           </p>
         </section>
 
-        <div className="row justify-content-center g-4">
-          <div className="col-lg-6">
+        <div className="row justify-content-center align-items-start g-4">
+          <div className="col-12 col-lg-6 col-xl-5">
             <QRCodeCard townName={townName} qrUrl={qrUrl} />
           </div>
 
-          <div className="col-lg-5">
-            <div className="card border-0 shadow-sm rounded-4 h-100">
+          <div className="col-12 col-lg-5 col-xl-4">
+            <div className="card border-0 shadow-sm rounded-4">
               <div className="card-body p-4">
-                <div className="d-flex align-items-center gap-3 mb-4">
-                  <span className="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style={{ width: "42px", height: "42px" }}>
+                <div className="d-flex gap-3 mb-4">
+                  <span
+                    className="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                    style={{ width: "42px", height: "42px" }}
+                  >
                     ✓
                   </span>
 
                   <div>
-                    <h5 className="fw-bold mb-0">Listo para imprimir</h5>
+                    <h5 className="fw-bold mb-1">Listo para imprimir</h5>
                     <p className="text-muted mb-0">
                       Puedes descargar el QR como imagen PNG o imprimirlo directamente.
                     </p>
                   </div>
                 </div>
 
-                <div className="d-flex align-items-center gap-3 mb-4">
-                  <span className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" style={{ width: "42px", height: "42px" }}>
-                    ⓘ
+                <div className="d-flex gap-3 mb-4">
+                  <span
+                    className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                    style={{ width: "42px", height: "42px" }}
+                  >
+                    i
                   </span>
 
                   <div>
-                    <h5 className="fw-bold mb-0">Flujo completo</h5>
+                    <h5 className="fw-bold mb-1">Flujo completo</h5>
                     <p className="text-muted mb-0">
                       QR → Login Google → JWT → Lugares turísticos del pueblo.
                     </p>
@@ -103,7 +108,7 @@ export default function QrPage() {
         </div>
       </main>
 
-      <footer className="text-center py-4 text-muted">
+      <footer className="text-center py-4 text-muted small">
         © 2026 Turismo Local POC. Costa Rica.
       </footer>
     </>

@@ -31,7 +31,11 @@ export default function QRCodeCard({ townName, qrUrl }) {
 
     const downloadLink = document.createElement("a");
     downloadLink.href = pngUrl;
-    downloadLink.download = `qr-${townName.toLowerCase().replaceAll(" ", "-")}.png`;
+    downloadLink.download = `qr-${townName
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replaceAll(" ", "-")}.png`;
 
     document.body.appendChild(downloadLink);
     downloadLink.click();
@@ -44,7 +48,7 @@ export default function QRCodeCard({ townName, qrUrl }) {
         <div className="mb-3">
           <span
             className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center mb-2"
-            style={{ width: "54px", height: "54px", fontSize: "26px" }}
+            style={{ width: "50px", height: "50px", fontSize: "24px" }}
           >
             ☼
           </span>
@@ -53,7 +57,6 @@ export default function QRCodeCard({ townName, qrUrl }) {
         </div>
 
         <p className="text-muted mb-1">Bienvenido a</p>
-
         <h3 className="fw-bold mb-4">{townName}</h3>
 
         <div
@@ -62,7 +65,7 @@ export default function QRCodeCard({ townName, qrUrl }) {
         >
           <QRCodeCanvas
             value={qrUrl}
-            size={260}
+            size={220}
             includeMargin={true}
             level="H"
           />
@@ -77,7 +80,7 @@ export default function QRCodeCard({ townName, qrUrl }) {
           <p className="small fw-semibold text-break mb-0">{qrUrl}</p>
         </div>
 
-        <div className="d-flex flex-wrap justify-content-center gap-2">
+        <div className="d-grid gap-2 d-sm-flex flex-sm-wrap justify-content-sm-center">
           <button className="btn btn-info text-white" onClick={handleOpenQr}>
             Probar QR
           </button>
@@ -87,17 +90,13 @@ export default function QRCodeCard({ townName, qrUrl }) {
           </button>
 
           <button className="btn btn-outline-secondary" onClick={handlePrint}>
-            Imprimir Código
+            Imprimir
           </button>
 
           <button className="btn btn-outline-dark" onClick={handleCopy}>
             Copiar URL
           </button>
         </div>
-
-        <p className="text-muted small mt-4 mb-0">
-          Ideal para imprimir y colocar en hoteles, restaurantes o puntos turísticos.
-        </p>
       </div>
     </div>
   );
