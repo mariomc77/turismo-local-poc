@@ -33,7 +33,6 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
     logout();
     setMenuOpen(false);
     navigate(`/p/${activeSlug}`);
-    window.location.reload();
   };
 
   const handleTownChange = (event) => {

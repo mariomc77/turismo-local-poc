@@ -1,64 +1,97 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, test, vi } from "vitest";
 import Navbar from "../components/Navbar";
 
-vi.mock("../context/AuthContext", () => ({
-  useAuth: vi.fn()
-}));
+const mockNavigate = vi.fn();
+const mockLogout = vi.fn();
 
-const mockReload = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
 
-Object.defineProperty(window, "location", {
-  value: {
-    reload: mockReload
-  },
-  writable: true
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  };
 });
 
-import { useAuth } from "../context/AuthContext";
+vi.mock("../api/townApi", () => ({
+  getAllTowns: vi.fn(() =>
+    Promise.resolve([
+      {
+        id: 1,
+        slug: "playas-del-coco",
+        name: "Playas del Coco",
+        active: true
+      },
+      {
+        id: 2,
+        slug: "tamarindo",
+        name: "Tamarindo",
+        active: true
+      },
+      {
+        id: 3,
+        slug: "samara",
+        name: "Sámara",
+        active: true
+      }
+    ])
+  )
+}));
+
+let authMock = {
+  user: null,
+  logout: mockLogout
+};
+
+vi.mock("../context/AuthContext", () => ({
+  useAuth: () => authMock
+}));
 
 describe("Navbar", () => {
   beforeEach(() => {
-    localStorage.clear();
     vi.clearAllMocks();
+    localStorage.clear();
+    sessionStorage.clear();
+
+    authMock = {
+      user: null,
+      logout: mockLogout
+    };
   });
 
-  test("muestra enlaces principales cuando no hay usuario", () => {
-    useAuth.mockReturnValue({
-      user: null
-    });
-
+  it("muestra enlaces principales cuando no hay usuario", async () => {
     render(
       <MemoryRouter>
         <Navbar townSlug="playas-del-coco" />
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Turismo Local POC/i)).toBeInTheDocument();
     expect(screen.getByText(/Lugares/i)).toBeInTheDocument();
     expect(screen.getByText(/Mapa/i)).toBeInTheDocument();
     expect(screen.getByText(/Mi QR/i)).toBeInTheDocument();
     expect(screen.getByText(/Empezar/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByRole("combobox", { name: /seleccionar pueblo/i })).toHaveValue(
+        "playas-del-coco"
+      );
+    });
+
+    expect(screen.getByText(/Playas del Coco/i)).toBeInTheDocument();
   });
 
-  test("muestra usuario y permite cerrar sesión", () => {
-    localStorage.setItem("token", "jwt-token");
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        name: "Mario",
-        email: "mario@gmail.com"
-      })
-    );
-
-    useAuth.mockReturnValue({
+  it("muestra usuario y permite cerrar sesión", () => {
+    authMock = {
       user: {
         name: "Mario",
-        email: "mario@gmail.com",
-        role: "CLIENT"
-      }
-    });
+        email: "mario@test.com",
+        role: "CLIENT",
+        picture: ""
+      },
+      logout: mockLogout
+    };
 
     render(
       <MemoryRouter>
@@ -70,8 +103,7 @@ describe("Navbar", () => {
 
     fireEvent.click(screen.getByText(/Salir/i));
 
-    expect(localStorage.getItem("token")).toBeNull();
-    expect(localStorage.getItem("user")).toBeNull();
-    expect(mockReload).toHaveBeenCalled();
+    expect(mockLogout).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith("/p/playas-del-coco");
   });
 });
