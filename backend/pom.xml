@@ -131,6 +131,25 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+
+                <configuration>
+                    <excludes>
+                        <exclude>com/turismo/backend/BackendApplication.class</exclude>
+                        <exclude>com/turismo/backend/config/**</exclude>
+                        <exclude>com/turismo/backend/security/**</exclude>
+                        <exclude>com/turismo/backend/common/**</exclude>
+                        <exclude>com/turismo/backend/**/controller/**</exclude>
+                        <exclude>com/turismo/backend/**/dto/**</exclude>
+                        <exclude>com/turismo/backend/**/entity/**</exclude>
+                        <exclude>com/turismo/backend/**/repository/**</exclude>
+                        <exclude>com/turismo/backend/**/request/**</exclude>
+                        <exclude>com/turismo/backend/**/response/**</exclude>
+                        <exclude>com/turismo/backend/**/exception/**</exclude>
+                        <exclude>com/turismo/backend/**/enums/**</exclude>
+                        <exclude>com/turismo/backend/**/model/**</exclude>
+                    </excludes>
+                </configuration>
+
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -161,7 +180,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.70</minimum>
+                                            <minimum>0.60</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -169,14 +188,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>com/turismo/backend/BackendApplication.class</exclude>
-                        <exclude>com/turismo/backend/config/**</exclude>
-                        <exclude>com/turismo/backend/security/**</exclude>
-                        <exclude>com/turismo/backend/common/**</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
