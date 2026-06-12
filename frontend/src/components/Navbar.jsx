@@ -9,15 +9,15 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
 
   const isAdmin = user?.role === "ADMIN";
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
     navigate(`/p/${townSlug}`);
     window.location.reload();
-  };
-
-  const closeMenu = () => {
-    setMenuOpen(false);
   };
 
   return (
@@ -82,7 +82,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
               <li className="nav-item">
                 <Link
                   className="nav-link fw-semibold text-info"
-                  to="/admin"
+                  to="/admin/dashboard"
                   onClick={closeMenu}
                 >
                   Admin
@@ -99,7 +99,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 </span>
 
                 <span
-                  className="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold"
+                  className="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold overflow-hidden"
                   style={{ width: "42px", height: "42px" }}
                 >
                   {user.picture ? (
@@ -107,19 +107,30 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                       src={user.picture}
                       alt={user.name || "Usuario"}
                       className="rounded-circle"
-                      style={{ width: "42px", height: "42px", objectFit: "cover" }}
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        objectFit: "cover"
+                      }}
                     />
                   ) : (
                     user.name?.charAt(0)?.toUpperCase() || "U"
                   )}
                 </span>
 
-                <button className="btn btn-outline-secondary btn-sm" onClick={handleLogout}>
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={handleLogout}
+                >
                   Salir
                 </button>
               </>
             ) : (
-              <Link className="btn btn-info text-white btn-sm" to={`/p/${townSlug}`}>
+              <Link
+                className="btn btn-info text-white btn-sm"
+                to={`/p/${townSlug}`}
+                onClick={closeMenu}
+              >
                 Empezar
               </Link>
             )}

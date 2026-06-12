@@ -28,8 +28,6 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="/qr/:townSlug" element={<QrPage />} />
-
       <Route
         path="/map/:townSlug"
         element={
@@ -39,7 +37,23 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="/error" element={<ErrorPage />} />
+      <Route
+        path="/qr/:townSlug"
+        element={
+          <ProtectedRoute>
+            <QrPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <Navigate to="/admin/dashboard" replace />
+          </AdminRoute>
+        }
+      />
 
       <Route
         path="/admin/dashboard"
@@ -86,7 +100,12 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="*" element={<Navigate to="/error?reason=not-found" replace />} />
+      <Route path="/error" element={<ErrorPage />} />
+
+      <Route
+        path="*"
+        element={<Navigate to="/error?reason=not-found" replace />}
+      />
     </Routes>
   );
 }
