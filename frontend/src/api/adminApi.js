@@ -5,6 +5,11 @@ export async function getAdminTowns() {
   return response.data;
 }
 
+export async function getAdminTownById(id) {
+  const response = await api.get(`/admin/towns/${id}`);
+  return response.data;
+}
+
 export async function createAdminTown(town) {
   const response = await api.post("/admin/towns", town);
   return response.data;
@@ -29,6 +34,11 @@ export async function getAdminPlaces() {
   return response.data;
 }
 
+export async function getAdminPlaceById(id) {
+  const response = await api.get(`/admin/places/${id}`);
+  return response.data;
+}
+
 export async function createAdminPlace(place) {
   const response = await api.post("/admin/places", place);
   return response.data;
@@ -50,5 +60,15 @@ export async function deleteAdminPlace(id) {
 
 export async function getAdminUsers() {
   const response = await api.get("/admin/users");
+  return response.data;
+}
+
+export async function updateAdminUserRole(id, role) {
+  const response = await api.patch(`/admin/users/${id}/role`, { role });
+  return response.data;
+}
+
+export async function toggleAdminUserActive(id) {
+  const response = await api.patch(`/admin/users/${id}/toggle-active`);
   return response.data;
 }

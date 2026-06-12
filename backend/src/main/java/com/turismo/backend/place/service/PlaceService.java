@@ -40,6 +40,8 @@ public class PlaceService {
                 .latitude(place.getLatitude())
                 .longitude(place.getLongitude())
                 .active(place.getActive())
+                .createdAt(place.getCreatedAt())
+                .updatedAt(place.getUpdatedAt())
                 .build();
     }
 }

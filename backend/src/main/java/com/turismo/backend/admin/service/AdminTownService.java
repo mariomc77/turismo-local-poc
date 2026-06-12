@@ -7,6 +7,7 @@ import com.turismo.backend.town.dto.TownResponse;
 import com.turismo.backend.town.dto.TownUpdateRequest;
 import com.turismo.backend.town.entity.Town;
 import com.turismo.backend.town.repository.TownRepository;
+import com.turismo.backend.town.service.TownService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,12 @@ import java.util.List;
 public class AdminTownService {
 
     private final TownRepository townRepository;
+    private final TownService townService;
 
     public List<TownResponse> getAllTowns() {
         return townRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
+                .map(townService::mapToResponse)
                 .toList();
     }
 
@@ -30,7 +32,7 @@ public class AdminTownService {
         Town town = townRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
 
-        return mapToResponse(town);
+        return townService.mapToResponse(town);
     }
 
     public TownResponse createTown(TownCreateRequest request) {
@@ -44,14 +46,14 @@ public class AdminTownService {
 
         Town town = Town.builder()
                 .slug(slug)
-                .name(request.getName())
+                .name(request.getName().trim())
                 .description(request.getDescription())
                 .province(request.getProvince())
                 .country(request.getCountry() == null || request.getCountry().isBlank() ? "Costa Rica" : request.getCountry())
                 .active(request.getActive() == null || request.getActive())
                 .build();
 
-        return mapToResponse(townRepository.save(town));
+        return townService.mapToResponse(townRepository.save(town));
     }
 
     public TownResponse updateTown(Long id, TownUpdateRequest request) {
@@ -67,22 +69,22 @@ public class AdminTownService {
         }
 
         town.setSlug(slug);
-        town.setName(request.getName());
+        town.setName(request.getName().trim());
         town.setDescription(request.getDescription());
         town.setProvince(request.getProvince());
         town.setCountry(request.getCountry() == null || request.getCountry().isBlank() ? "Costa Rica" : request.getCountry());
         town.setActive(request.getActive() == null || request.getActive());
 
-        return mapToResponse(townRepository.save(town));
+        return townService.mapToResponse(townRepository.save(town));
     }
 
     public TownResponse toggleActive(Long id) {
         Town town = townRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
 
-        town.setActive(!town.getActive());
+        town.setActive(!Boolean.TRUE.equals(town.getActive()));
 
-        return mapToResponse(townRepository.save(town));
+        return townService.mapToResponse(townRepository.save(town));
     }
 
     public void deleteTown(Long id) {
@@ -116,17 +118,5 @@ public class AdminTownService {
                 .replaceAll("[^a-z0-9\\s-]", "")
                 .replaceAll("\\s+", "-")
                 .replaceAll("-+", "-");
-    }
-
-    private TownResponse mapToResponse(Town town) {
-        return TownResponse.builder()
-                .id(town.getId())
-                .slug(town.getSlug())
-                .name(town.getName())
-                .description(town.getDescription())
-                .province(town.getProvince())
-                .country(town.getCountry())
-                .active(town.getActive())
-                .build();
     }
 }

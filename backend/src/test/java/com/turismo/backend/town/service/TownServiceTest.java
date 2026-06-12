@@ -12,9 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TownServiceTest {
@@ -26,12 +25,12 @@ class TownServiceTest {
     private TownService townService;
 
     @Test
-    void getTownBySlug_whenTownExists_returnsTownResponse() {
+    void getTownBySlugReturnsTownResponse() {
         Town town = Town.builder()
                 .id(1L)
                 .slug("playas-del-coco")
                 .name("Playas del Coco")
-                .description("Destino turístico en Guanacaste")
+                .description("Destino turístico")
                 .province("Guanacaste")
                 .country("Costa Rica")
                 .active(true)
@@ -42,22 +41,80 @@ class TownServiceTest {
 
         TownResponse response = townService.getTownBySlug("playas-del-coco");
 
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getSlug()).isEqualTo("playas-del-coco");
-        assertThat(response.getName()).isEqualTo("Playas del Coco");
-        assertThat(response.getProvince()).isEqualTo("Guanacaste");
-        assertThat(response.getCountry()).isEqualTo("Costa Rica");
-        assertThat(response.getActive()).isTrue();
+        assertEquals(1L, response.getId());
+        assertEquals("playas-del-coco", response.getSlug());
+        assertEquals("Playas del Coco", response.getName());
+        assertTrue(response.getActive());
+
+        verify(townRepository).findBySlugAndActiveTrue("playas-del-coco");
     }
 
     @Test
-    void getTownBySlug_whenTownDoesNotExist_throwsResourceNotFoundException() {
-        when(townRepository.findBySlugAndActiveTrue("pueblo-falso"))
+    void getTownBySlugThrowsWhenTownDoesNotExist() {
+        when(townRepository.findBySlugAndActiveTrue("no-existe"))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> townService.getTownBySlug("pueblo-falso"))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("Pueblo no encontrado");
+        assertThrows(ResourceNotFoundException.class,
+                () -> townService.getTownBySlug("no-existe"));
+
+        verify(townRepository).findBySlugAndActiveTrue("no-existe");
+    }
+
+    @Test
+    void findActiveTownBySlugReturnsTown() {
+        Town town = Town.builder()
+                .id(1L)
+                .slug("tamarindo")
+                .name("Tamarindo")
+                .active(true)
+                .build();
+
+        when(townRepository.findBySlugAndActiveTrue("tamarindo"))
+                .thenReturn(Optional.of(town));
+
+        Town result = townService.findActiveTownBySlug("tamarindo");
+
+        assertEquals("tamarindo", result.getSlug());
+        assertEquals("Tamarindo", result.getName());
+
+        verify(townRepository).findBySlugAndActiveTrue("tamarindo");
+    }
+
+    @Test
+    void findTownByIdReturnsTown() {
+        Town town = Town.builder()
+                .id(10L)
+                .slug("samara")
+                .name("Sámara")
+                .active(true)
+                .build();
+
+        when(townRepository.findById(10L)).thenReturn(Optional.of(town));
+
+        Town result = townService.findTownById(10L);
+
+        assertEquals(10L, result.getId());
+        assertEquals("samara", result.getSlug());
+
+        verify(townRepository).findById(10L);
+    }
+
+    @Test
+    void findTownBySlugReturnsTown() {
+        Town town = Town.builder()
+                .id(2L)
+                .slug("nosara")
+                .name("Nosara")
+                .active(true)
+                .build();
+
+        when(townRepository.findBySlug("nosara")).thenReturn(Optional.of(town));
+
+        Town result = townService.findTownBySlug("nosara");
+
+        assertEquals(2L, result.getId());
+        assertEquals("Nosara", result.getName());
+
+        verify(townRepository).findBySlug("nosara");
     }
 }

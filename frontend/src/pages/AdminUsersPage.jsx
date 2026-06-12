@@ -2,165 +2,220 @@ import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import AdminTable from "../components/AdminTable";
 import SearchBar from "../components/SearchBar";
-import { getAdminUsers } from "../api/adminApi";
+import LoadingSpinner from "../components/LoadingSpinner";
+import {
+  getAdminUsers,
+  toggleAdminUserActive,
+  updateAdminUserRole
+} from "../api/adminApi";
 
 export default function AdminUsersPage() {
-  const [searchText, setSearchText] = useState("");
   const [users, setUsers] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [roleFilter, setRoleFilter] = useState("Todos");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  async function loadUsers() {
-    try {
-      setLoading(true);
-      setError("");
-      const data = await getAdminUsers();
-      setUsers(Array.isArray(data) ? data : []);
-    } catch {
-      setError("No se pudieron cargar los usuarios registrados.");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   useEffect(() => {
     loadUsers();
   }, []);
 
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await getAdminUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const name = user.name || "";
       const email = user.email || "";
-
-      return (
+      const role = user.role || "";
+      const matchesSearch =
         name.toLowerCase().includes(searchText.toLowerCase()) ||
-        email.toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
-  }, [users, searchText]);
+        email.toLowerCase().includes(searchText.toLowerCase());
 
-  function formatDate(value) {
-    if (!value) {
+      const matchesRole = roleFilter === "Todos" || role === roleFilter;
+
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchText, roleFilter]);
+
+  const handleRoleChange = async (id, role) => {
+    const confirmChange = window.confirm(`¿Deseas cambiar el rol del usuario a ${role}?`);
+
+    if (!confirmChange) {
+      return;
+    }
+
+    const updatedUser = await updateAdminUserRole(id, role);
+
+    setUsers((current) =>
+      current.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+
+    alert("Rol actualizado correctamente");
+  };
+
+  const handleToggleActive = async (user) => {
+    const action = user.active ? "desactivar" : "activar";
+    const confirmChange = window.confirm(`¿Deseas ${action} este usuario?`);
+
+    if (!confirmChange) {
+      return;
+    }
+
+    const updatedUser = await toggleAdminUserActive(user.id);
+
+    setUsers((current) =>
+      current.map((item) => (item.id === updatedUser.id ? updatedUser : item))
+    );
+
+    alert("Estado del usuario actualizado correctamente");
+  };
+
+  const formatDate = (date) => {
+    if (!date) {
       return "Sin fecha";
     }
 
-    return new Date(value).toLocaleDateString("es-CR", {
+    return new Date(date).toLocaleDateString("es-CR", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
     });
-  }
+  };
 
   const columns = [
     {
       key: "name",
-      label: "Nombre",
+      label: "Usuario",
       render: (row) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div className="d-flex align-items-center gap-3">
           {row.pictureUrl ? (
             <img
               src={row.pictureUrl}
-              alt={row.name || "Usuario"}
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                objectFit: "cover"
-              }}
+              alt={row.name}
+              width="42"
+              height="42"
+              className="rounded-circle"
+              referrerPolicy="no-referrer"
             />
           ) : (
-            <div
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                background: "#0f172a",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "700"
-              }}
-            >
-              {(row.name || row.email || "U").charAt(0).toUpperCase()}
+            <div className="admin-avatar">
+              {(row.name || "U").charAt(0).toUpperCase()}
             </div>
           )}
-
-          <strong>{row.name || "Usuario sin nombre"}</strong>
+          <div>
+            <strong>{row.name || "Sin nombre"}</strong>
+            <div className="text-muted small">{row.email}</div>
+          </div>
         </div>
       )
     },
     {
-      key: "email",
-      label: "Correo",
-      render: (row) => row.email || "Sin correo"
-    },
-    {
       key: "role",
       label: "Rol",
-      render: (row) => <span className="admin-badge">{row.role || "CLIENT"}</span>
+      render: (row) => (
+        <select
+          className="form-select form-select-sm"
+          value={row.role || "CLIENT"}
+          onChange={(event) => handleRoleChange(row.id, event.target.value)}
+        >
+          <option value="CLIENT">CLIENT</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      )
     },
     {
       key: "active",
       label: "Estado",
       render: (row) => (
-        <span className={row.active ? "status-active" : "status-inactive"}>
+        <span className={`badge rounded-pill ${row.active ? "bg-success" : "bg-secondary"}`}>
           {row.active ? "Activo" : "Inactivo"}
         </span>
       )
     },
     {
       key: "createdAt",
-      label: "Fecha de registro",
+      label: "Registro",
       render: (row) => formatDate(row.createdAt)
     }
   ];
 
+  if (loading) {
+    return (
+      <AdminLayout>
+        <LoadingSpinner message="Cargando usuarios registrados..." />
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
-      <div className="admin-page-header">
-        <div>
-          <h1>Gestión de usuarios</h1>
-          <p>Consulta los usuarios registrados realmente en la base de datos.</p>
+      <section className="admin-section">
+        <div className="admin-section-header">
+          <div>
+            <h1>Gestión de usuarios</h1>
+            <p>Consulta usuarios reales registrados y administra sus roles dentro del sistema.</p>
+          </div>
         </div>
 
-        <button className="btn-admin-primary" onClick={loadUsers}>
-          Actualizar
-        </button>
-      </div>
+        <div className="admin-toolbar">
+          <SearchBar
+            value={searchText}
+            onChange={setSearchText}
+            placeholder="Buscar usuario por nombre o correo"
+          />
 
-      <div className="admin-filter-row" style={{ gridTemplateColumns: "1fr 220px" }}>
-        <SearchBar value={searchText} onChange={setSearchText} placeholder="Buscar por nombre o correo..." />
-
-        <div className="admin-mini-stat">
-          <span>Total de usuarios</span>
-          <strong>{filteredUsers.length} usuarios</strong>
+          <select
+            className="form-select"
+            value={roleFilter}
+            onChange={(event) => setRoleFilter(event.target.value)}
+          >
+            <option value="Todos">Todos los roles</option>
+            <option value="CLIENT">CLIENT</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
         </div>
-      </div>
 
-      {loading && (
-        <div className="admin-card">
-          <p>Cargando usuarios...</p>
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <span>Total de usuarios</span>
+            <strong>{users.length}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>Usuarios visibles</span>
+            <strong>{filteredUsers.length}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>Administradores</span>
+            <strong>{users.filter((user) => user.role === "ADMIN").length}</strong>
+          </div>
         </div>
-      )}
 
-      {error && (
-        <div className="admin-card">
-          <p style={{ color: "#dc2626", margin: 0 }}>{error}</p>
-        </div>
-      )}
-
-      {!loading && !error && (
         <AdminTable
           columns={columns}
           data={filteredUsers}
           renderActions={(row) => (
             <div className="admin-actions">
-              <button onClick={() => alert(`Usuario: ${row.name || row.email}`)}>Ver</button>
+              <button type="button" onClick={() => handleToggleActive(row)}>
+                {row.active ? "Desactivar" : "Activar"}
+              </button>
             </div>
           )}
         />
-      )}
+
+        {filteredUsers.length === 0 && (
+          <div className="admin-empty">
+            <h3>No hay usuarios registrados</h3>
+            <p>Los usuarios aparecerán cuando inicien sesión con Google.</p>
+          </div>
+        )}
+      </section>
     </AdminLayout>
   );
 }

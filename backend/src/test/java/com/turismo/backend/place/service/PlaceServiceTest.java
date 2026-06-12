@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PlaceServiceTest {
@@ -30,7 +30,7 @@ class PlaceServiceTest {
     private PlaceService placeService;
 
     @Test
-    void getPlacesByTownSlug_whenPlacesExist_returnsPlaceResponses() {
+    void getPlacesByTownSlugReturnsActivePlaces() {
         Town town = Town.builder()
                 .id(1L)
                 .slug("playas-del-coco")
@@ -41,52 +41,80 @@ class PlaceServiceTest {
         Place place = Place.builder()
                 .id(1L)
                 .town(town)
-                .name("Playa del Coco")
-                .description("Playa principal de la zona")
+                .name("Playa principal")
+                .description("Lugar turístico")
                 .category(PlaceCategory.PLAYA)
-                .address("Centro de Playas del Coco")
+                .address("Centro")
                 .imageUrl("https://example.com/playa.jpg")
-                .latitude(10.5508)
-                .longitude(-85.6976)
+                .latitude(10.123)
+                .longitude(-85.123)
                 .active(true)
                 .build();
 
-        when(townService.findActiveTownBySlug("playas-del-coco"))
-                .thenReturn(town);
+        when(townService.findActiveTownBySlug("playas-del-coco")).thenReturn(town);
+        when(placeRepository.findByTownAndActiveTrue(town)).thenReturn(List.of(place));
 
-        when(placeRepository.findByTownAndActiveTrue(town))
-                .thenReturn(List.of(place));
+        List<PlaceResponse> result = placeService.getPlacesByTownSlug("playas-del-coco");
 
-        List<PlaceResponse> response = placeService.getPlacesByTownSlug("playas-del-coco");
+        assertEquals(1, result.size());
+        assertEquals("Playa principal", result.get(0).getName());
+        assertEquals(PlaceCategory.PLAYA, result.get(0).getCategory());
+        assertEquals("playas-del-coco", result.get(0).getTownSlug());
 
-        assertThat(response).hasSize(1);
-        assertThat(response.get(0).getId()).isEqualTo(1L);
-        assertThat(response.get(0).getName()).isEqualTo("Playa del Coco");
-        assertThat(response.get(0).getCategory()).isEqualTo(PlaceCategory.PLAYA);
-        assertThat(response.get(0).getTownSlug()).isEqualTo("playas-del-coco");
-        assertThat(response.get(0).getTownName()).isEqualTo("Playas del Coco");
-        assertThat(response.get(0).getLatitude()).isEqualTo(10.5508);
-        assertThat(response.get(0).getLongitude()).isEqualTo(-85.6976);
-        assertThat(response.get(0).getActive()).isTrue();
+        verify(townService).findActiveTownBySlug("playas-del-coco");
+        verify(placeRepository).findByTownAndActiveTrue(town);
     }
 
     @Test
-    void getPlacesByTownSlug_whenNoPlaces_returnsEmptyList() {
+    void getPlacesByTownSlugReturnsEmptyListWhenNoPlaces() {
         Town town = Town.builder()
                 .id(1L)
-                .slug("playas-del-coco")
-                .name("Playas del Coco")
+                .slug("samara")
+                .name("Sámara")
                 .active(true)
                 .build();
 
-        when(townService.findActiveTownBySlug("playas-del-coco"))
-                .thenReturn(town);
+        when(townService.findActiveTownBySlug("samara")).thenReturn(town);
+        when(placeRepository.findByTownAndActiveTrue(town)).thenReturn(List.of());
 
-        when(placeRepository.findByTownAndActiveTrue(town))
-                .thenReturn(List.of());
+        List<PlaceResponse> result = placeService.getPlacesByTownSlug("samara");
 
-        List<PlaceResponse> response = placeService.getPlacesByTownSlug("playas-del-coco");
+        assertTrue(result.isEmpty());
 
-        assertThat(response).isEmpty();
+        verify(townService).findActiveTownBySlug("samara");
+        verify(placeRepository).findByTownAndActiveTrue(town);
+    }
+
+    @Test
+    void mapToResponseMapsAllFields() {
+        Town town = Town.builder()
+                .id(5L)
+                .slug("tamarindo")
+                .name("Tamarindo")
+                .active(true)
+                .build();
+
+        Place place = Place.builder()
+                .id(8L)
+                .town(town)
+                .name("Mirador Tamarindo")
+                .description("Vista al mar")
+                .category(PlaceCategory.MIRADOR)
+                .address("Ruta principal")
+                .imageUrl("https://example.com/mirador.jpg")
+                .latitude(10.299)
+                .longitude(-85.840)
+                .active(true)
+                .build();
+
+        PlaceResponse response = placeService.mapToResponse(place);
+
+        assertEquals(8L, response.getId());
+        assertEquals(5L, response.getTownId());
+        assertEquals("tamarindo", response.getTownSlug());
+        assertEquals("Tamarindo", response.getTownName());
+        assertEquals("Mirador Tamarindo", response.getName());
+        assertEquals(PlaceCategory.MIRADOR, response.getCategory());
+        assertTrue(response.getActive());
     }
 }
