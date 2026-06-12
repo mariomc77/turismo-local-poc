@@ -1,20 +1,21 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { ADMIN_EMAILS } from "../config/adminEmails";
+import { useAuth } from "../auth/AuthContext";
 
 export default function AdminRoute({ children }) {
-  const { user, isAuthenticated, loadingAuth } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (loadingAuth) {
-    return <LoadingSpinner />;
+  if (loading) {
+    return (
+      <div className="min-vh-100 d-flex align-items-center justify-content-center">
+        <div className="text-center">
+          <div className="spinner-border text-info mb-3" role="status"></div>
+          <p className="text-muted">Validando permisos...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/p/playas-del-coco" replace />;
-  }
-
-  if (!user || !ADMIN_EMAILS.includes(user.email)) {
+  if (!user || user.role !== "ADMIN") {
     return <Navigate to="/places/playas-del-coco" replace />;
   }
 
