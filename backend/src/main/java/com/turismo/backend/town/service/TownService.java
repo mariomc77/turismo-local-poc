@@ -44,7 +44,7 @@ public class TownService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
     }
 
-    private TownResponse mapToResponse(Town town) {
+    public TownResponse mapToResponse(Town town) {
         return TownResponse.builder()
                 .id(town.getId())
                 .slug(town.getSlug())
