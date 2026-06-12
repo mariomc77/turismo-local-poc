@@ -1,12 +1,15 @@
-node_modules
-dist
-dist-ssr
-*.local
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+*.class
+*.jar
+*.war
+*.ear
+
+*.log
 
 .env
 .env.local
 .env.production
 .env.development
-
-.vite
-coverage
+.env.*.local

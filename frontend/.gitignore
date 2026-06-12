@@ -1,60 +1,40 @@
-# Logs
-
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Dependencies
-
-node_modules
-frontend/node_modules
-backend/.mvn/wrapper/maven-wrapper.jar
-
-# Build outputs
-
-dist
-dist-ssr
-frontend/dist
-backend/target
-
-# Environment files
+node_modules/
+dist/
+dist-ssr/
+*.local
 
 .env
 .env.local
 .env.production
 .env.development
-frontend/.env
-frontend/.env.local
-frontend/.env.production
-frontend/.env.development
-backend/.env
+.env.*.local
 
-# Local files
+.vite/
+coverage/
 
-*.local
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
 
-# Editor directories and files
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+frontend/coverage/
 
-.vscode/*
-!.vscode/extensions.json
-.idea
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS files
-
 Thumbs.db
-desktop.ini
 
-# Test coverage
+.idea/
+.vscode/
+*.iml
 
-coverage
-frontend/coverage
+*.class
+*.jar
+*.war
+*.ear
