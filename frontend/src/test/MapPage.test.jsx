@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import MapPage from "../pages/MapPage";
@@ -37,6 +37,7 @@ vi.mock("../api/placeApi", () => ({
         imageUrl: "https://example.com/playa.jpg",
         latitude: 10.55,
         longitude: -85.69,
+        rating: 4.8,
         active: true
       }
     ])
@@ -65,6 +66,11 @@ function renderMapPage() {
 describe("MapPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-google-maps-key");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("renderiza la página del mapa", async () => {
@@ -73,6 +79,9 @@ describe("MapPage", () => {
     await waitFor(() => {
       expect(screen.getByText(/Navbar Mock/i)).toBeInTheDocument();
     });
+
+    expect(screen.getByTestId("api-provider")).toBeInTheDocument();
+    expect(screen.getByTestId("map")).toBeInTheDocument();
   });
 
   it("carga lugares del pueblo", async () => {
@@ -81,5 +90,8 @@ describe("MapPage", () => {
     await waitFor(() => {
       expect(screen.getByText(/Playa del Coco/i)).toBeInTheDocument();
     });
+
+    expect(screen.getByText(/Explorar/i)).toBeInTheDocument();
+    expect(screen.getByText(/Playas del Coco/i)).toBeInTheDocument();
   });
 });
