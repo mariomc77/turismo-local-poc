@@ -107,6 +107,12 @@ jobs:
         working-directory: frontend
         run: npm run test:coverage
 
+      - name: Check frontend coverage file
+        run: |
+          echo "Checking frontend coverage..."
+          ls -la frontend/coverage
+          test -f frontend/coverage/lcov.info
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -121,6 +127,12 @@ jobs:
       - name: Generate backend coverage
         working-directory: backend
         run: ./mvnw clean verify
+
+      - name: Check backend coverage file
+        run: |
+          echo "Checking backend coverage..."
+          ls -la backend/target/site/jacoco
+          test -f backend/target/site/jacoco/jacoco.xml
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
