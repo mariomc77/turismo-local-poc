@@ -42,6 +42,8 @@ public class PlaceService {
                 .active(place.getActive())
                 .createdAt(place.getCreatedAt())
                 .updatedAt(place.getUpdatedAt())
+                .createdByEmail(place.getCreatedByEmail())
+                .updatedByEmail(place.getUpdatedByEmail())
                 .build();
     }
 }

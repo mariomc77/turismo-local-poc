@@ -20,4 +20,6 @@ public class TownResponse {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String createdByEmail;
+    private String updatedByEmail;
 }
