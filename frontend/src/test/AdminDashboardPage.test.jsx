@@ -58,18 +58,7 @@ describe("AdminDashboardPage", () => {
     globalThis.URL.createObjectURL = vi.fn(() => "blob:report-url");
     globalThis.URL.revokeObjectURL = vi.fn();
 
-    vi.spyOn(document, "createElement").mockImplementation((tagName) => {
-      const element = document.constructor.prototype.createElement.call(
-        document,
-        tagName
-      );
-
-      if (tagName === "a") {
-        element.click = vi.fn();
-      }
-
-      return element;
-    });
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
   });
 
   it("muestra el loading mientras carga datos", async () => {
@@ -126,9 +115,9 @@ describe("AdminDashboardPage", () => {
 
     expect(screen.getByText(/Lugares por Categoría/i)).toBeInTheDocument();
     expect(screen.getByText(/Playa del Coco/i)).toBeInTheDocument();
-    expect(screen.getByText(/Playas del Coco/i)).toBeInTheDocument();
-    expect(screen.getByText(/Playa/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId("stat-card").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Playas del Coco/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Playa/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByTestId("stat-card")).toHaveLength(4);
   });
 
   it("muestra mensaje cuando no hay categorías ni lugares", async () => {
@@ -209,7 +198,11 @@ describe("AdminDashboardPage", () => {
       expect(screen.getByText(/Panel de Administración/i)).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText(/Reporte/i));
+    const reportButtons = screen.getAllByRole("button", {
+      name: /Reporte/i
+    });
+
+    fireEvent.click(reportButtons[0]);
 
     expect(globalThis.URL.createObjectURL).toHaveBeenCalled();
     expect(globalThis.URL.revokeObjectURL).toHaveBeenCalledWith(
