@@ -53,20 +53,20 @@ describe("AdminLayout", () => {
     render(
       <MemoryRouter>
         <AdminLayout>
-          <span>Dashboard</span>
+          <span>Contenido principal admin</span>
         </AdminLayout>
       </MemoryRouter>
     );
 
     expect(screen.getByText("A")).toBeInTheDocument();
-    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Contenido principal admin/i)).toBeInTheDocument();
   });
 
   it("muestra el footer del panel administrativo", () => {
     render(
       <MemoryRouter>
         <AdminLayout>
-          <span>Dashboard</span>
+          <span>Vista de reportes</span>
         </AdminLayout>
       </MemoryRouter>
     );
