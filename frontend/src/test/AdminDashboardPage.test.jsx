@@ -55,8 +55,8 @@ describe("AdminDashboardPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    global.URL.createObjectURL = vi.fn(() => "blob:report-url");
-    global.URL.revokeObjectURL = vi.fn();
+    globalThis.URL.createObjectURL = vi.fn(() => "blob:report-url");
+    globalThis.URL.revokeObjectURL = vi.fn();
 
     vi.spyOn(document, "createElement").mockImplementation((tagName) => {
       const element = document.constructor.prototype.createElement.call(
@@ -87,8 +87,16 @@ describe("AdminDashboardPage", () => {
 
   it("muestra estadísticas del dashboard con datos activos", async () => {
     getAdminTowns.mockResolvedValueOnce([
-      { id: 1, name: "Playas del Coco", active: true },
-      { id: 2, name: "Tamarindo", active: false }
+      {
+        id: 1,
+        name: "Playas del Coco",
+        active: true
+      },
+      {
+        id: 2,
+        name: "Tamarindo",
+        active: false
+      }
     ]);
 
     getAdminPlaces.mockResolvedValueOnce([
@@ -138,7 +146,13 @@ describe("AdminDashboardPage", () => {
   });
 
   it("ordena los últimos lugares por id descendente", async () => {
-    getAdminTowns.mockResolvedValueOnce([{ id: 1, name: "Coco", active: true }]);
+    getAdminTowns.mockResolvedValueOnce([
+      {
+        id: 1,
+        name: "Coco",
+        active: true
+      }
+    ]);
 
     getAdminPlaces.mockResolvedValueOnce([
       {
@@ -171,7 +185,11 @@ describe("AdminDashboardPage", () => {
 
   it("descarga el reporte mensual", async () => {
     getAdminTowns.mockResolvedValueOnce([
-      { id: 1, name: "Playas del Coco", active: true }
+      {
+        id: 1,
+        name: "Playas del Coco",
+        active: true
+      }
     ]);
 
     getAdminPlaces.mockResolvedValueOnce([
@@ -193,8 +211,10 @@ describe("AdminDashboardPage", () => {
 
     fireEvent.click(screen.getByText(/Reporte/i));
 
-    expect(URL.createObjectURL).toHaveBeenCalled();
-    expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:report-url");
+    expect(globalThis.URL.createObjectURL).toHaveBeenCalled();
+    expect(globalThis.URL.revokeObjectURL).toHaveBeenCalledWith(
+      "blob:report-url"
+    );
   });
 
   it("usa listas vacías cuando la API no retorna arreglos", async () => {
