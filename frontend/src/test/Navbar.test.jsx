@@ -71,13 +71,13 @@ describe("Navbar", () => {
 
     expect(screen.getByText(/Lugares/i)).toBeInTheDocument();
     expect(screen.getByText(/Mapa/i)).toBeInTheDocument();
-    expect(screen.getByText(/Mi QR/i)).toBeInTheDocument();
-    expect(screen.getByText(/Empezar/i)).toBeInTheDocument();
+    expect(screen.getByText(/^QR$/i)).toBeInTheDocument();
+    expect(screen.getByText(/Iniciar sesión/i)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("combobox", { name: /seleccionar pueblo/i })
-      ).toHaveValue("playas-del-coco");
+      expect(screen.getByRole("combobox", { name: /pueblo/i })).toHaveValue(
+        "playas-del-coco"
+      );
     });
 
     expect(screen.getByText(/Playas del Coco/i)).toBeInTheDocument();
@@ -102,15 +102,15 @@ describe("Navbar", () => {
 
     expect(screen.getByText(/Mario/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/Salir/i));
+    fireEvent.click(screen.getByText(/Cerrar sesión/i));
 
     expect(mockLogout).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith("/p/playas-del-coco");
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("combobox", { name: /seleccionar pueblo/i })
-      ).toHaveValue("playas-del-coco");
+      expect(screen.getByRole("combobox", { name: /pueblo/i })).toHaveValue(
+        "playas-del-coco"
+      );
     });
   });
 });
