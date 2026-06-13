@@ -1,0 +1,57 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import AdminLayout from "../components/AdminLayout";
+
+describe("AdminLayout", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("muestra el nombre del usuario guardado", () => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name: "Mario Admin",
+        picture: "https://example.com/avatar.png"
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <AdminLayout>
+          <h1>Contenido Admin</h1>
+        </AdminLayout>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Mario Admin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Contenido Admin/i)).toBeInTheDocument();
+  });
+
+  it("muestra Admin Local cuando no hay usuario guardado", () => {
+    render(
+      <MemoryRouter>
+        <AdminLayout>
+          <p>Panel administrativo</p>
+        </AdminLayout>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Admin Local/i)).toBeInTheDocument();
+    expect(screen.getByText(/Panel administrativo/i)).toBeInTheDocument();
+  });
+
+  it("muestra el footer del panel administrativo", () => {
+    render(
+      <MemoryRouter>
+        <AdminLayout>
+          <span>Dashboard</span>
+        </AdminLayout>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/2026 Turismo Local POC/i)).toBeInTheDocument();
+    expect(screen.getByText(/Costa Rica/i)).toBeInTheDocument();
+  });
+});
