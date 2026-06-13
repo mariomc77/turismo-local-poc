@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "Turismo Local"
+  },
+  "navbar": {
+    "home": "Inicio",
+    "places": "Lugares",
+    "map": "Mapa",
+    "qr": "QR",
+    "admin": "Administración",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "town": "Pueblo",
+    "language": "Idioma"
+  },
+  "townLogin": {
+    "title": "Descubrí el turismo local",
+    "subtitle": "Escaneá el código QR, iniciá sesión con Google y explorá los mejores lugares turísticos del pueblo.",
+    "continueGoogle": "Continuar con Google",
+    "loading": "Cargando información del pueblo...",
+    "error": "No fue posible cargar la información del pueblo."
+  },
+  "places": {
+    "title": "Lugares turísticos",
+    "subtitle": "Explorá los lugares recomendados para este pueblo.",
+    "searchPlaceholder": "Buscar por nombre o descripción...",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "sortBy": "Ordenar por",
+    "sortName": "Nombre",
+    "sortCategory": "Categoría",
+    "sortDate": "Fecha de creación",
+    "results": "resultados encontrados",
+    "noResults": "No se encontraron lugares con los filtros aplicados.",
+    "viewMap": "Ver mapa",
+    "viewList": "Ver lista",
+    "details": "Ver detalles"
+  },
+  "map": {
+    "title": "Mapa interactivo",
+    "subtitle": "Visualizá los lugares turísticos geolocalizados.",
+    "myLocation": "Mi ubicación",
+    "loading": "Cargando mapa...",
+    "locationError": "No fue posible obtener tu ubicación.",
+    "details": "Detalles"
+  },
+  "qr": {
+    "title": "Código QR del pueblo",
+    "subtitle": "Escaneá este código para acceder directamente al destino turístico.",
+    "copy": "Copiar URL",
+    "print": "Imprimir QR"
+  },
+  "admin": {
+    "dashboard": "Panel administrativo",
+    "towns": "Pueblos",
+    "places": "Lugares",
+    "users": "Usuarios",
+    "reports": "Reportes",
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirmDelete": "¿Seguro que deseás eliminar este registro?",
+    "imageUrl": "URL de imagen",
+    "createdAt": "Fecha de creación",
+    "updatedAt": "Fecha de modificación",
+    "createdBy": "Creado por",
+    "updatedBy": "Modificado por"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Intentar de nuevo",
+    "active": "Activo",
+    "inactive": "Inactivo"
+  }
+}

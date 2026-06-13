@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { getAllTowns } from "../api/townApi";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Navbar({ townSlug = "playas-del-coco" }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [towns, setTowns] = useState([]);
 
@@ -46,6 +50,8 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
     navigate(`/p/${selectedSlug}`);
   };
 
+  const userName = user?.name || user?.email || "Usuario";
+  const userPicture = user?.picture || user?.pictureUrl || "";
   const userInitial =
     user?.name?.charAt(0)?.toUpperCase() ||
     user?.email?.charAt(0)?.toUpperCase() ||
@@ -58,14 +64,17 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
           className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info me-3"
           to={`/places/${activeSlug}`}
           onClick={closeMenu}
+          aria-label={t("app.name")}
         >
           <span
             className="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
             style={{ width: "44px", height: "44px", fontSize: "22px" }}
+            aria-hidden="true"
           >
             ☼
           </span>
-          <span className="d-none d-sm-inline">Turismo Local POC</span>
+
+          <span className="d-none d-sm-inline">{t("app.name")}</span>
           <span className="d-inline d-sm-none">Turismo</span>
         </Link>
 
@@ -73,7 +82,8 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
           className="navbar-toggler"
           type="button"
           aria-label="Toggle navigation"
-          onClick={() => setMenuOpen(!menuOpen)}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((currentValue) => !currentValue)}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -86,7 +96,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 to={`/places/${activeSlug}`}
                 onClick={closeMenu}
               >
-                Lugares
+                {t("navbar.places")}
               </Link>
             </li>
 
@@ -96,7 +106,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 to={`/map/${activeSlug}`}
                 onClick={closeMenu}
               >
-                Mapa
+                {t("navbar.map")}
               </Link>
             </li>
 
@@ -106,7 +116,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 to={`/qr/${activeSlug}`}
                 onClick={closeMenu}
               >
-                Mi QR
+                {t("navbar.qr")}
               </Link>
             </li>
 
@@ -117,7 +127,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                   to="/admin/dashboard"
                   onClick={closeMenu}
                 >
-                  Admin
+                  {t("navbar.admin")}
                 </Link>
               </li>
             )}
@@ -129,10 +139,10 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
               value={activeSlug}
               onChange={handleTownChange}
               style={{ width: "190px", maxWidth: "100%" }}
-              aria-label="Seleccionar pueblo"
+              aria-label={t("navbar.town")}
             >
               {towns.length === 0 && (
-                <option value={activeSlug}>Pueblo actual</option>
+                <option value={activeSlug}>{t("navbar.town")}</option>
               )}
 
               {towns.map((town) => (
@@ -142,24 +152,28 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
               ))}
             </select>
 
+            <LanguageSwitcher />
+
             {user ? (
               <div className="d-flex align-items-center gap-2">
                 <span
                   className="text-muted text-truncate d-none d-md-inline"
                   style={{ maxWidth: "190px" }}
-                  title={user.name || user.email || "Usuario"}
+                  title={userName}
                 >
-                  Hola, {user.name || user.email || "Usuario"}
+                  {userName}
                 </span>
 
                 <span
                   className="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold overflow-hidden flex-shrink-0"
                   style={{ width: "42px", height: "42px" }}
+                  aria-label={userName}
+                  title={userName}
                 >
-                  {user.picture ? (
+                  {userPicture ? (
                     <img
-                      src={user.picture}
-                      alt={user.name || "Usuario"}
+                      src={userPicture}
+                      alt={userName}
                       className="rounded-circle"
                       style={{
                         width: "42px",
@@ -173,10 +187,11 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 </span>
 
                 <button
+                  type="button"
                   className="btn btn-outline-secondary btn-sm text-nowrap"
                   onClick={handleLogout}
                 >
-                  Salir
+                  {t("navbar.logout")}
                 </button>
               </div>
             ) : (
@@ -185,7 +200,7 @@ export default function Navbar({ townSlug = "playas-del-coco" }) {
                 to={`/p/${activeSlug}`}
                 onClick={closeMenu}
               >
-                Empezar
+                {t("navbar.login")}
               </Link>
             )}
           </div>

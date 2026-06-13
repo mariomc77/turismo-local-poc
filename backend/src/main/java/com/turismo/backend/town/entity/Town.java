@@ -4,18 +4,22 @@ import com.turismo.backend.place.entity.Place;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "towns")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -58,6 +63,14 @@ public class Town {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @CreatedBy
+    @Column(name = "created_by_email", updatable = false, length = 180)
+    private String createdByEmail;
+
+    @LastModifiedBy
+    @Column(name = "updated_by_email", length = 180)
+    private String updatedByEmail;
+
     @OneToMany(mappedBy = "town", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Place> places = new ArrayList<>();
@@ -65,7 +78,11 @@ public class Town {
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
         updatedAt = now;
 
         if (active == null) {

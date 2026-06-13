@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "Local Tourism"
+  },
+  "navbar": {
+    "home": "Home",
+    "places": "Places",
+    "map": "Map",
+    "qr": "QR",
+    "admin": "Admin",
+    "logout": "Log out",
+    "login": "Log in",
+    "town": "Town",
+    "language": "Language"
+  },
+  "townLogin": {
+    "title": "Discover local tourism",
+    "subtitle": "Scan the QR code, sign in with Google and explore the best tourist places in town.",
+    "continueGoogle": "Continue with Google",
+    "loading": "Loading town information...",
+    "error": "Could not load town information."
+  },
+  "places": {
+    "title": "Tourist places",
+    "subtitle": "Explore the recommended places for this town.",
+    "searchPlaceholder": "Search by name or description...",
+    "category": "Category",
+    "allCategories": "All categories",
+    "sortBy": "Sort by",
+    "sortName": "Name",
+    "sortCategory": "Category",
+    "sortDate": "Creation date",
+    "results": "results found",
+    "noResults": "No places were found with the selected filters.",
+    "viewMap": "View map",
+    "viewList": "View list",
+    "details": "View details"
+  },
+  "map": {
+    "title": "Interactive map",
+    "subtitle": "View geolocated tourist places.",
+    "myLocation": "My location",
+    "loading": "Loading map...",
+    "locationError": "Could not get your location.",
+    "details": "Details"
+  },
+  "qr": {
+    "title": "Town QR code",
+    "subtitle": "Scan this code to access the tourist destination directly.",
+    "copy": "Copy URL",
+    "print": "Print QR"
+  },
+  "admin": {
+    "dashboard": "Admin dashboard",
+    "towns": "Towns",
+    "places": "Places",
+    "users": "Users",
+    "reports": "Reports",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this record?",
+    "imageUrl": "Image URL",
+    "createdAt": "Creation date",
+    "updatedAt": "Last update",
+    "createdBy": "Created by",
+    "updatedBy": "Updated by"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}

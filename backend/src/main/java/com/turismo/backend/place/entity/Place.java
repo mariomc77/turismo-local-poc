@@ -3,6 +3,7 @@ package com.turismo.backend.place.entity;
 import com.turismo.backend.town.entity.Town;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -19,11 +20,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "places")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -68,10 +73,22 @@ public class Place {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @CreatedBy
+    @Column(name = "created_by_email", updatable = false, length = 180)
+    private String createdByEmail;
+
+    @LastModifiedBy
+    @Column(name = "updated_by_email", length = 180)
+    private String updatedByEmail;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
         updatedAt = now;
 
         if (active == null) {
