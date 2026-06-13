@@ -4,77 +4,115 @@ Sistema web full-stack para la promoción de turismo local mediante códigos QR,
 
 ## Descripción del proyecto
 
-Sistema Web de Turismo Local es una aplicación desarrollada para el curso de Programación IV de la Universidad Nacional. El proyecto nace como una Prueba de Concepto y evoluciona hacia un producto funcional completo, orientado a facilitar el acceso digital a información turística de pueblos locales.
+Sistema Web de Turismo Local es una aplicación desarrollada para el curso de Programación IV de la Universidad Nacional, Sede Regional Chorotega, Campus Liberia.
 
-El sistema permite que un usuario escanee un código QR físico asociado a un pueblo turístico, ingrese a una pantalla pública del destino, inicie sesión con Google y consulte una lista de lugares turísticos recomendados. Además, la aplicación cuenta con un mapa interactivo, filtros de búsqueda, sistema multi-pueblo y un panel administrativo protegido por roles.
+El proyecto nace como una Prueba de Concepto orientada a facilitar el acceso digital a información turística de pueblos locales. La idea principal consiste en que un usuario pueda escanear un código QR físico ubicado en un destino turístico, acceder a una pantalla pública del pueblo, iniciar sesión con Google y consultar lugares recomendados.
 
-La solución implementa una arquitectura cliente-servidor desacoplada, utilizando React en el frontend y Spring Boot en el backend. La información se almacena en PostgreSQL y el sistema se encuentra desplegado en la nube mediante Vercel, Render y GitHub Actions.
+La aplicación evolucionó hacia un sistema funcional completo que incluye autenticación con Google SSO, generación de JWT, persistencia de usuarios, sistema multi-pueblo, mapa interactivo, filtros de búsqueda y un panel administrativo protegido por roles.
+
+La solución utiliza una arquitectura cliente-servidor desacoplada:
+
+- Frontend desarrollado con React y Vite.
+- Backend desarrollado con Spring Boot y Java 17.
+- Base de datos PostgreSQL.
+- Despliegue en la nube mediante Vercel, Render y Railway.
+- Automatización de pruebas y análisis de calidad con GitHub Actions y SonarCloud.
 
 ## Flujo principal del sistema
 
 1. El usuario escanea un código QR físico.
 2. El QR abre la pantalla pública del pueblo turístico.
 3. El usuario inicia sesión con Google SSO.
-4. El frontend recibe un Google ID Token.
+4. Google devuelve un Google ID Token al frontend.
 5. El frontend envía el Google ID Token al backend.
 6. El backend valida el token con Google.
-7. El backend registra o actualiza el usuario.
+7. El backend registra o actualiza el usuario en la base de datos.
 8. El backend genera un JWT propio del sistema.
 9. El frontend guarda el JWT y los datos del usuario.
 10. El usuario accede a la lista de lugares turísticos del pueblo.
-11. El usuario puede consultar el mapa interactivo y aplicar filtros.
+11. El usuario puede consultar detalles, aplicar filtros y ver el mapa interactivo.
 12. Si el usuario tiene rol ADMIN, puede acceder al panel administrativo.
+
+Flujo resumido:
+
+```txt
+QR físico
+  ↓
+/p/{townSlug}
+  ↓
+Login con Google
+  ↓
+Google ID Token
+  ↓
+Backend valida token
+  ↓
+Backend genera JWT
+  ↓
+Frontend guarda JWT
+  ↓
+/places/{townSlug}
+  ↓
+Lugares turísticos, mapa y administración
+```
 
 ## URLs de producción
 
 ### Frontend
 
+```txt
 https://turismo-local-poc.vercel.app
+```
 
 ### Backend
 
+```txt
 https://turismo-local-backend.onrender.com
+```
 
 ### Ruta principal de ejemplo
 
+```txt
 https://turismo-local-poc.vercel.app/p/playas-del-coco
+```
 
 ## Tecnologías utilizadas
 
 ### Frontend
 
-* React
-* Vite
-* Bootstrap
-* React Router
-* Axios
-* Google OAuth Provider
-* Google Maps con `@vis.gl/react-google-maps`
-* Vitest
-* Testing Library
+- React
+- Vite
+- Bootstrap
+- React Router
+- Axios
+- Google OAuth Provider
+- Google Maps con `@vis.gl/react-google-maps`
+- Vitest
+- Testing Library
+- Vercel
 
 ### Backend
 
-* Spring Boot
-* Java 17
-* Spring Security
-* JWT
-* Google ID Token Validation
-* API REST JSON
-* PostgreSQL
-* H2 para pruebas
-* JUnit
-* Mockito
-* JaCoCo
+- Spring Boot
+- Java 17
+- Spring Security
+- JWT
+- Google ID Token Validation
+- API REST JSON
+- PostgreSQL
+- H2 para pruebas
+- JUnit
+- Mockito
+- JaCoCo
+- Render
 
 ### Infraestructura y DevOps
 
-* GitHub
-* GitHub Actions
-* Vercel
-* Render
-* PostgreSQL en Render
-* SonarCloud
+- GitHub
+- GitHub Actions
+- Vercel
+- Render
+- Railway PostgreSQL
+- SonarCloud
 
 ## Estructura del repositorio
 
@@ -122,93 +160,99 @@ turismo-local-poc/
 
 ### Módulos del frontend
 
-* Pantalla pública del pueblo.
-* Inicio de sesión con Google.
-* Lista de lugares turísticos.
-* Búsqueda por nombre o descripción.
-* Filtro por categoría.
-* Ordenamiento de resultados.
-* Vista de mapa interactivo.
-* Marcadores geolocalizados.
-* Generación y descarga de códigos QR.
-* Panel administrativo.
-* Gestión de pueblos.
-* Gestión de lugares turísticos.
-* Gestión de usuarios registrados.
-* Página de error personalizada.
+- Pantalla pública del pueblo.
+- Inicio de sesión con Google.
+- Lista de lugares turísticos.
+- Búsqueda por nombre o descripción.
+- Filtro por categoría.
+- Ordenamiento de resultados.
+- Vista de mapa interactivo.
+- Marcadores geolocalizados.
+- Generación de códigos QR.
+- Panel administrativo.
+- Gestión de pueblos.
+- Gestión de lugares turísticos.
+- Gestión de usuarios registrados.
+- Página de error personalizada.
+- Rutas protegidas para usuarios autenticados.
+- Rutas protegidas para administradores.
 
 ### Módulos del backend
 
-* Autenticación con Google.
-* Validación de Google ID Token.
-* Generación y validación de JWT.
-* API REST para pueblos.
-* API REST para lugares turísticos.
-* API REST para códigos QR.
-* API REST para usuarios.
-* API REST para administración.
-* Seguridad basada en roles.
-* Persistencia con PostgreSQL.
-* Pruebas unitarias e integración.
+- Autenticación con Google.
+- Validación de Google ID Token.
+- Generación y validación de JWT.
+- API REST para pueblos.
+- API REST para lugares turísticos.
+- API REST para códigos QR.
+- API REST para usuarios.
+- API REST para administración.
+- Seguridad basada en roles.
+- Manejo global de errores.
+- Persistencia con PostgreSQL.
+- Pruebas unitarias e integración.
 
 ## Funcionalidades implementadas
 
-* Autenticación con Google SSO.
-* Validación del token de Google en backend.
-* Generación de JWT propio.
-* Persistencia de usuarios reales.
-* Acceso protegido mediante JWT.
-* Sistema de roles CLIENT y ADMIN.
-* Vista pública por pueblo turístico.
-* Sistema multi-pueblo.
-* Lista de lugares turísticos por pueblo.
-* Mapa interactivo con marcadores.
-* Filtros por categoría.
-* Búsqueda de lugares.
-* Panel administrativo.
-* CRUD de pueblos.
-* CRUD de lugares turísticos.
-* Consulta de usuarios registrados.
-* Generación de códigos QR.
-* Despliegue público del frontend.
-* Despliegue público del backend.
-* Pipeline CI/CD con GitHub Actions.
+- Autenticación con Google SSO.
+- Validación del token de Google en backend.
+- Generación de JWT propio.
+- Persistencia de usuarios reales.
+- Acceso protegido mediante JWT.
+- Sistema de roles `CLIENT` y `ADMIN`.
+- Vista pública por pueblo turístico.
+- Sistema multi-pueblo.
+- Lista de lugares turísticos por pueblo.
+- Mapa interactivo con marcadores.
+- Filtros por categoría.
+- Búsqueda de lugares.
+- Panel administrativo.
+- CRUD de pueblos.
+- CRUD de lugares turísticos.
+- Consulta de usuarios registrados.
+- Actualización de roles de usuario.
+- Generación de códigos QR.
+- Despliegue público del frontend.
+- Despliegue público del backend.
+- Base de datos PostgreSQL en la nube.
+- Pipeline CI/CD con GitHub Actions.
+- Análisis de calidad con SonarCloud.
 
 ## Endpoints principales
 
 ### Endpoints públicos
 
-| Método | Endpoint                   | Descripción                                      |
-| ------ | -------------------------- | ------------------------------------------------ |
-| POST   | `/api/auth/google`         | Valida el Google ID Token y genera un JWT        |
-| GET    | `/api/towns/{slug}`        | Obtiene los datos públicos de un pueblo          |
-| GET    | `/api/towns/{slug}/places` | Lista los lugares turísticos de un pueblo        |
-| GET    | `/api/towns/{slug}/qr`     | Obtiene la información del QR asociado al pueblo |
+| Método | Endpoint | Descripción |
+| ------ | -------- | ----------- |
+| POST | `/api/auth/google` | Valida el Google ID Token y genera un JWT |
+| GET | `/api/towns/{slug}` | Obtiene los datos públicos de un pueblo |
+| GET | `/api/towns/{slug}/places` | Lista los lugares turísticos de un pueblo |
+| GET | `/api/towns/{slug}/qr` | Obtiene la información del QR asociado al pueblo |
 
 ### Endpoints para usuario autenticado
 
-| Método | Endpoint        | Descripción                                    |
-| ------ | --------------- | ---------------------------------------------- |
-| GET    | `/api/users/me` | Obtiene la información del usuario autenticado |
+| Método | Endpoint | Descripción |
+| ------ | -------- | ----------- |
+| GET | `/api/users/me` | Obtiene la información del usuario autenticado |
 
 ### Endpoints administrativos
 
-| Método | Endpoint                               | Descripción                           |
-| ------ | -------------------------------------- | ------------------------------------- |
-| GET    | `/api/admin/towns`                     | Lista los pueblos registrados         |
-| GET    | `/api/admin/towns/{id}`                | Obtiene un pueblo por ID              |
-| POST   | `/api/admin/towns`                     | Crea un pueblo                        |
-| PUT    | `/api/admin/towns/{id}`                | Actualiza un pueblo                   |
-| PATCH  | `/api/admin/towns/{id}/toggle-active`  | Activa o desactiva un pueblo          |
-| DELETE | `/api/admin/towns/{id}`                | Elimina un pueblo                     |
-| GET    | `/api/admin/places`                    | Lista los lugares turísticos          |
-| GET    | `/api/admin/places/{id}`               | Obtiene un lugar turístico por ID     |
-| POST   | `/api/admin/places`                    | Crea un lugar turístico               |
-| PUT    | `/api/admin/places/{id}`               | Actualiza un lugar turístico          |
-| PATCH  | `/api/admin/places/{id}/toggle-active` | Activa o desactiva un lugar turístico |
-| DELETE | `/api/admin/places/{id}`               | Elimina un lugar turístico            |
-| GET    | `/api/admin/users`                     | Lista los usuarios registrados        |
-| PATCH  | `/api/admin/users/{id}/role`           | Actualiza el rol de un usuario        |
+| Método | Endpoint | Descripción |
+| ------ | -------- | ----------- |
+| GET | `/api/admin/towns` | Lista los pueblos registrados |
+| GET | `/api/admin/towns/{id}` | Obtiene un pueblo por ID |
+| POST | `/api/admin/towns` | Crea un pueblo |
+| PUT | `/api/admin/towns/{id}` | Actualiza un pueblo |
+| PATCH | `/api/admin/towns/{id}/toggle-active` | Activa o desactiva un pueblo |
+| DELETE | `/api/admin/towns/{id}` | Elimina un pueblo |
+| GET | `/api/admin/places` | Lista los lugares turísticos |
+| GET | `/api/admin/places/{id}` | Obtiene un lugar turístico por ID |
+| POST | `/api/admin/places` | Crea un lugar turístico |
+| PUT | `/api/admin/places/{id}` | Actualiza un lugar turístico |
+| PATCH | `/api/admin/places/{id}/toggle-active` | Activa o desactiva un lugar turístico |
+| DELETE | `/api/admin/places/{id}` | Elimina un lugar turístico |
+| GET | `/api/admin/users` | Lista los usuarios registrados |
+| PATCH | `/api/admin/users/{id}/role` | Actualiza el rol de un usuario |
 
 ## Modelo de datos
 
@@ -218,15 +262,15 @@ Representa un pueblo turístico dentro del sistema.
 
 Campos principales:
 
-* `id`
-* `slug`
-* `name`
-* `description`
-* `province`
-* `country`
-* `active`
-* `createdAt`
-* `updatedAt`
+- `id`
+- `slug`
+- `name`
+- `description`
+- `province`
+- `country`
+- `active`
+- `createdAt`
+- `updatedAt`
 
 ### Place
 
@@ -234,18 +278,18 @@ Representa un lugar turístico asociado a un pueblo.
 
 Campos principales:
 
-* `id`
-* `town`
-* `name`
-* `description`
-* `category`
-* `address`
-* `imageUrl`
-* `latitude`
-* `longitude`
-* `active`
-* `createdAt`
-* `updatedAt`
+- `id`
+- `town`
+- `name`
+- `description`
+- `category`
+- `address`
+- `imageUrl`
+- `latitude`
+- `longitude`
+- `active`
+- `createdAt`
+- `updatedAt`
 
 ### User
 
@@ -253,15 +297,15 @@ Representa un usuario autenticado mediante Google.
 
 Campos principales:
 
-* `id`
-* `googleId`
-* `email`
-* `name`
-* `pictureUrl`
-* `role`
-* `active`
-* `createdAt`
-* `updatedAt`
+- `id`
+- `googleId`
+- `email`
+- `name`
+- `pictureUrl`
+- `role`
+- `active`
+- `createdAt`
+- `updatedAt`
 
 ### Role
 
@@ -269,18 +313,18 @@ Define los roles disponibles dentro del sistema.
 
 Roles:
 
-* `CLIENT`
-* `ADMIN`
+- `CLIENT`
+- `ADMIN`
 
 ## Categorías de lugares turísticos
 
-* `PLAYA`
-* `MIRADOR`
-* `GASTRONOMIA`
-* `PASEOS`
-* `CULTURA`
-* `RESTAURANTE`
-* `OTRO`
+- `PLAYA`
+- `MIRADOR`
+- `GASTRONOMIA`
+- `PASEOS`
+- `CULTURA`
+- `RESTAURANTE`
+- `OTRO`
 
 ## Variables de entorno
 
@@ -315,13 +359,13 @@ PORT=8080
 
 ### Backend
 
-Entrar a la carpeta del backend.
+Entrar a la carpeta del backend:
 
 ```bash
 cd backend
 ```
 
-Ejecutar la aplicación.
+Ejecutar la aplicación:
 
 ```bash
 ./mvnw spring-boot:run
@@ -341,19 +385,19 @@ http://localhost:8080
 
 ### Frontend
 
-Entrar a la carpeta del frontend.
+Entrar a la carpeta del frontend:
 
 ```bash
 cd frontend
 ```
 
-Instalar dependencias.
+Instalar dependencias:
 
 ```bash
 npm install
 ```
 
-Ejecutar la aplicación.
+Ejecutar la aplicación:
 
 ```bash
 npm run dev
@@ -369,12 +413,14 @@ http://localhost:5173
 
 ### Pruebas del frontend
 
+Ejecutar pruebas:
+
 ```bash
 cd frontend
 npm test
 ```
 
-Para ejecutar pruebas con cobertura:
+Ejecutar pruebas con cobertura:
 
 ```bash
 npm run test:coverage
@@ -382,11 +428,20 @@ npm run test:coverage
 
 Pruebas implementadas:
 
-* `SearchBar.test.jsx`
-* `CategoryFilter.test.jsx`
-* `AdminStatCard.test.jsx`
+- `SearchBar.test.jsx`
+- `CategoryFilter.test.jsx`
+- `PlaceCard.test.jsx`
+- `QRCodeCard.test.jsx`
+- `AuthContext.test.jsx`
+- `ProtectedRoute.test.jsx`
+- `AdminTable.test.jsx`
+- `AdminStatCard.test.jsx`
+- `PlacesPage.test.jsx`
+- `MapPage.test.jsx`
 
 ### Pruebas del backend
+
+Ejecutar pruebas:
 
 ```bash
 cd backend
@@ -399,7 +454,7 @@ En Windows PowerShell:
 .\mvnw.cmd test
 ```
 
-Para ejecutar pruebas y generar reporte de cobertura:
+Ejecutar pruebas y generar reporte de cobertura:
 
 ```bash
 ./mvnw clean verify
@@ -411,9 +466,11 @@ En Windows PowerShell:
 .\mvnw.cmd clean verify
 ```
 
+El backend utiliza JaCoCo para generar reportes de cobertura.
+
 ## CI/CD
 
-El proyecto utiliza GitHub Actions para ejecutar automáticamente pruebas y build del frontend y backend.
+El proyecto utiliza GitHub Actions para ejecutar automáticamente pruebas, build y análisis de calidad.
 
 El pipeline realiza las siguientes acciones:
 
@@ -429,13 +486,22 @@ El pipeline realiza las siguientes acciones:
 
 El proyecto utiliza SonarCloud para el análisis estático de código.
 
-Métricas esperadas:
+Métricas objetivo:
 
-* Cero bugs críticos.
-* Cero vulnerabilidades críticas.
-* Code smells controlados.
-* Cobertura mínima del 70%.
-* Duplicación menor o igual al 5%.
+- Quality Gate aprobado.
+- Cobertura mínima del 70%.
+- Duplicación menor o igual al 5%.
+- Bugs críticos controlados.
+- Vulnerabilidades críticas controladas.
+- Code smells controlados.
+
+Estado actual del análisis:
+
+```txt
+Quality Gate: Passed
+Coverage: superior al 70%
+Duplications: menor al 5%
+```
 
 ## Despliegue
 
@@ -445,11 +511,11 @@ El frontend está desplegado en Vercel.
 
 Configuración principal:
 
-* Root Directory: `frontend`
-* Framework: Vite
-* Install Command: `npm ci`
-* Build Command: `npm run build`
-* Output Directory: `dist`
+- Root Directory: `frontend`
+- Framework: Vite
+- Install Command: `npm ci`
+- Build Command: `npm run build`
+- Output Directory: `dist`
 
 Archivo `frontend/vercel.json`:
 
@@ -468,7 +534,13 @@ Archivo `frontend/vercel.json`:
 
 El backend está desplegado en Render utilizando Docker.
 
-El servicio backend se conecta a una base de datos PostgreSQL desplegada también en Render.
+El servicio backend expone una API REST pública y se conecta a una base de datos PostgreSQL en la nube.
+
+### Base de datos
+
+La base de datos utilizada en producción es PostgreSQL en Railway.
+
+El backend utiliza variables de entorno para conectarse a la base de datos y mantener seguras las credenciales.
 
 ## Seguridad
 
@@ -476,13 +548,13 @@ El sistema utiliza Spring Security con sesiones stateless y autenticación media
 
 Configuración principal:
 
-* CORS habilitado.
-* CSRF desactivado.
-* Sesiones stateless.
-* `/api/auth/google` público.
-* `/api/towns/**` público.
-* `/api/admin/**` protegido para usuarios con rol ADMIN.
-* Resto de endpoints protegidos mediante JWT.
+- CORS habilitado.
+- CSRF desactivado.
+- Sesiones stateless.
+- `/api/auth/google` público.
+- `/api/towns/**` público.
+- `/api/admin/**` protegido para usuarios con rol `ADMIN`.
+- Resto de endpoints protegidos mediante JWT.
 
 El frontend envía el JWT en cada solicitud protegida mediante el header:
 
@@ -496,9 +568,9 @@ El sistema soporta múltiples pueblos turísticos. Cada pueblo cuenta con su pro
 
 Pueblos de ejemplo:
 
-* Playas del Coco
-* Tamarindo
-* Sámara
+- Playas del Coco
+- Tamarindo
+- Sámara
 
 Rutas de ejemplo:
 
@@ -510,48 +582,57 @@ https://turismo-local-poc.vercel.app/p/samara
 
 ## Códigos QR
 
-El sistema permite generar códigos QR asociados a cada pueblo turístico. Estos QR pueden imprimirse y colocarse físicamente en puntos estratégicos del destino.
+El sistema permite generar códigos QR asociados a cada pueblo turístico.
 
-Cada QR redirige a la pantalla pública correspondiente del pueblo.
+Estos códigos QR pueden imprimirse y colocarse físicamente en puntos estratégicos del destino. Al ser escaneados, redirigen automáticamente a la pantalla pública correspondiente del pueblo.
+
+Ejemplo:
+
+```txt
+https://turismo-local-poc.vercel.app/qr/playas-del-coco
+```
 
 ## Documentación técnica
 
 La documentación técnica del proyecto incluye:
 
-* Resumen del PoC inicial.
-* Evolución hacia el producto final.
-* Diagrama de arquitectura.
-* Modelo de datos.
-* Flujo OAuth 2.0 con Google.
-* Capturas de la aplicación desplegada.
-* Capturas del panel administrativo.
-* Capturas de GitHub Actions.
-* Capturas de SonarCloud.
-* Reflexión final del equipo.
+- Resumen del PoC inicial.
+- Evolución hacia el producto final.
+- Diagrama de arquitectura.
+- Modelo de datos.
+- Flujo OAuth 2.0 con Google.
+- Flujo de autenticación con JWT.
+- Descripción de endpoints.
+- Capturas de la aplicación desplegada.
+- Capturas del panel administrativo.
+- Capturas de GitHub Actions.
+- Capturas de SonarCloud.
+- Reflexión final del equipo.
 
-## Capturas sugeridas
+## Capturas sugeridas para la entrega
 
-* Pantalla pública del pueblo.
-* Login con Google.
-* Lista de lugares turísticos.
-* Mapa interactivo.
-* Filtros y búsqueda.
-* Pantalla de QR.
-* Panel administrativo.
-* Gestión de lugares.
-* Gestión de pueblos.
-* Gestión de usuarios.
-* GitHub Actions en verde.
-* Render backend desplegado.
-* Vercel frontend desplegado.
-* SonarCloud Quality Gate.
+- Pantalla pública del pueblo.
+- Login con Google.
+- Lista de lugares turísticos.
+- Mapa interactivo.
+- Filtros y búsqueda.
+- Pantalla de QR.
+- Panel administrativo.
+- Gestión de lugares.
+- Gestión de pueblos.
+- Gestión de usuarios.
+- GitHub Actions en verde.
+- Render backend desplegado.
+- Vercel frontend desplegado.
+- Railway PostgreSQL activo.
+- SonarCloud Quality Gate aprobado.
 
 ## Integrantes
 
-* Mario Méndez Chaves
-* Yazir Zúñiga Morales
-* Jonathan Gómez Brenes
-* Emmanuel Rodríguez Camareno
+- Mario Méndez Chaves
+- Yazir Zúñiga Morales
+- Jonathan Gómez Brenes
+- Emmanuel Rodríguez Camareno
 
 ## Profesor
 
@@ -559,7 +640,7 @@ Darin Mauricio Gamboa
 
 ## Curso
 
-Programación IV
-Universidad Nacional
-Sede Regional Chorotega, Campus Liberia
+Programación IV  
+Universidad Nacional  
+Sede Regional Chorotega, Campus Liberia  
 I Ciclo 2026
