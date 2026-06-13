@@ -13,244 +13,202 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
+    private static final String COSTA_RICA = "Costa Rica";
+    private static final String GUANACASTE = "Guanacaste";
+    private static final String PUNTARENAS = "Puntarenas";
+
+    private static final String PLAYAS_DEL_COCO_SLUG = "playas-del-coco";
+    private static final String TAMARINDO_SLUG = "tamarindo";
+    private static final String SAMARA_SLUG = "samara";
+
+    private static final String BEACH_IMAGE_URL = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
+    private static final String OCEAN_IMAGE_URL = "https://images.unsplash.com/photo-1500375592092-40eb2168fd21";
+    private static final String NATURE_IMAGE_URL = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
+    private static final String FOOD_IMAGE_URL = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4";
+
     private final TownRepository townRepository;
     private final PlaceRepository placeRepository;
 
     @Override
     public void run(String... args) {
-        Town playasDelCoco = createTownIfNotExists(
-                "playas-del-coco",
-                "Playas del Coco",
-                "Destino turístico costero ubicado en el cantón de Carrillo, reconocido por sus playas, gastronomía, tours marítimos y atardeceres.",
-                "Guanacaste",
-                "Costa Rica"
-        );
-
-        Town tamarindo = createTownIfNotExists(
-                "tamarindo",
-                "Tamarindo",
-                "Pueblo turístico de Guanacaste famoso por el surf, la vida nocturna, restaurantes, hoteles y atardeceres frente al Pacífico.",
-                "Guanacaste",
-                "Costa Rica"
-        );
-
-        Town samara = createTownIfNotExists(
-                "samara",
-                "Sámara",
-                "Destino costero tranquilo de Guanacaste, ideal para familias, actividades acuáticas, naturaleza y turismo local.",
-                "Guanacaste",
-                "Costa Rica"
-        );
-
-        seedPlayasDelCoco(playasDelCoco);
-        seedTamarindo(tamarindo);
-        seedSamara(samara);
+        seedPlayasDelCoco();
+        seedTamarindo();
+        seedSamara();
     }
 
-    private Town createTownIfNotExists(
-            String slug,
-            String name,
-            String description,
-            String province,
-            String country
-    ) {
-        return townRepository.findBySlug(slug)
-                .orElseGet(() -> townRepository.save(
-                        Town.builder()
-                                .slug(slug)
-                                .name(name)
-                                .description(description)
-                                .province(province)
-                                .country(country)
-                                .active(true)
-                                .build()
-                ));
-    }
-
-    private void seedPlayasDelCoco(Town town) {
-        if (placeRepository.countByTown(town) > 0) {
+    private void seedPlayasDelCoco() {
+        if (townRepository.existsBySlug(PLAYAS_DEL_COCO_SLUG)) {
             return;
         }
 
-        createPlace(
-                town,
+        Town town = Town.builder()
+                .slug(PLAYAS_DEL_COCO_SLUG)
+                .name("Playas del Coco")
+                .description("Destino turístico costero ubicado en el cantón de Carrillo, reconocido por sus playas, gastronomía, tours marítimos y atardeceres.")
+                .province(GUANACASTE)
+                .country(COSTA_RICA)
+                .active(true)
+                .build();
+
+        Town savedTown = townRepository.save(town);
+
+        savePlace(
+                savedTown,
                 "Playa del Coco",
                 "Playa principal de la zona, ideal para caminar, disfrutar del atardecer y realizar actividades acuáticas.",
                 PlaceCategory.PLAYA,
                 "Centro de Playas del Coco, Carrillo, Guanacaste",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+                BEACH_IMAGE_URL,
                 10.5500,
                 -85.6970
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Playa Ocotal",
                 "Playa tranquila cercana a Playas del Coco, reconocida por sus aguas claras y ambiente relajado.",
                 PlaceCategory.PLAYA,
                 "Cerca de Playas del Coco, Carrillo, Guanacaste",
-                "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80",
+                OCEAN_IMAGE_URL,
                 10.5410,
                 -85.7270
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Mirador Playas del Coco",
                 "Punto panorámico para observar la bahía, el pueblo y los atardeceres del Pacífico.",
                 PlaceCategory.MIRADOR,
                 "Zona alta de Playas del Coco, Guanacaste",
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+                NATURE_IMAGE_URL,
                 10.5530,
                 -85.6900
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Boulevard Gastronómico",
                 "Área con restaurantes, cafeterías y comercios locales para disfrutar comida costarricense e internacional.",
-                PlaceCategory.RESTAURANTE,
+                PlaceCategory.GASTRONOMIA,
                 "Boulevard principal de Playas del Coco",
-                "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+                FOOD_IMAGE_URL,
                 10.5495,
                 -85.6978
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Tours en bote",
                 "Experiencias de navegación, pesca, snorkel y recorridos por playas cercanas.",
-                PlaceCategory.ACTIVIDAD,
+                PlaceCategory.PASEOS,
                 "Muelle principal de Playas del Coco",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+                OCEAN_IMAGE_URL,
                 10.5480,
                 -85.7000
         );
     }
 
-    private void seedTamarindo(Town town) {
-        if (placeRepository.countByTown(town) > 0) {
+    private void seedTamarindo() {
+        if (townRepository.existsBySlug(TAMARINDO_SLUG)) {
             return;
         }
 
-        createPlace(
-                town,
+        Town town = Town.builder()
+                .slug(TAMARINDO_SLUG)
+                .name("Tamarindo")
+                .description("Pueblo costero de Guanacaste reconocido por el surf, la vida nocturna, la gastronomía y sus atardeceres.")
+                .province(GUANACASTE)
+                .country(COSTA_RICA)
+                .active(true)
+                .build();
+
+        Town savedTown = townRepository.save(town);
+
+        savePlace(
+                savedTown,
                 "Playa Tamarindo",
-                "Playa reconocida internacionalmente por el surf, sus atardeceres y ambiente turístico.",
+                "Playa amplia y popular para surf, caminatas y atardeceres frente al Pacífico.",
                 PlaceCategory.PLAYA,
                 "Centro de Tamarindo, Santa Cruz, Guanacaste",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+                BEACH_IMAGE_URL,
                 10.2993,
                 -85.8371
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Estero de Tamarindo",
-                "Zona natural perfecta para recorridos en kayak, observación de aves y contacto con manglares.",
-                PlaceCategory.ACTIVIDAD,
-                "Estero de Tamarindo, Guanacaste",
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-                10.3050,
+                "Zona natural ideal para observar manglares, aves y realizar paseos en bote.",
+                PlaceCategory.PASEOS,
+                "Entrada norte de Tamarindo",
+                NATURE_IMAGE_URL,
+                10.3090,
+                -85.8378
+        );
+
+        savePlace(
+                savedTown,
+                "Zona Gastronómica de Tamarindo",
+                "Sector con restaurantes, cafeterías y opciones de comida internacional y local.",
+                PlaceCategory.GASTRONOMIA,
+                "Centro de Tamarindo",
+                FOOD_IMAGE_URL,
+                10.3000,
                 -85.8380
-        );
-
-        createPlace(
-                town,
-                "Mercado Gastronómico Tamarindo",
-                "Espacio con comida local e internacional, música y ambiente familiar.",
-                PlaceCategory.RESTAURANTE,
-                "Tamarindo centro, Guanacaste",
-                "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
-                10.3001,
-                -85.8390
-        );
-
-        createPlace(
-                town,
-                "Mirador Tamarindo",
-                "Punto recomendado para observar el océano Pacífico y el atardecer.",
-                PlaceCategory.MIRADOR,
-                "Zona alta de Tamarindo, Guanacaste",
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-                10.3020,
-                -85.8310
-        );
-
-        createPlace(
-                town,
-                "Hotel Boutique Tamarindo",
-                "Opción de hospedaje cercana a la playa y al centro turístico.",
-                PlaceCategory.HOTEL,
-                "Tamarindo, Guanacaste",
-                "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
-                10.2980,
-                -85.8360
         );
     }
 
-    private void seedSamara(Town town) {
-        if (placeRepository.countByTown(town) > 0) {
+    private void seedSamara() {
+        if (townRepository.existsBySlug(SAMARA_SLUG)) {
             return;
         }
 
-        createPlace(
-                town,
+        Town town = Town.builder()
+                .slug(SAMARA_SLUG)
+                .name("Sámara")
+                .description("Destino familiar de playa ubicado en Nicoya, conocido por su ambiente tranquilo, bahía protegida y actividades acuáticas.")
+                .province(GUANACASTE)
+                .country(COSTA_RICA)
+                .active(true)
+                .build();
+
+        Town savedTown = townRepository.save(town);
+
+        savePlace(
+                savedTown,
                 "Playa Sámara",
-                "Playa tranquila de arena clara, ideal para nadar, caminar y disfrutar en familia.",
+                "Bahía tranquila ideal para nadar, caminar, practicar kayak y disfrutar en familia.",
                 PlaceCategory.PLAYA,
                 "Centro de Sámara, Nicoya, Guanacaste",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+                BEACH_IMAGE_URL,
                 9.8816,
-                -85.5280
+                -85.5286
         );
 
-        createPlace(
-                town,
+        savePlace(
+                savedTown,
                 "Isla Chora",
-                "Isla cercana a Playa Sámara, popular para kayak, snorkel y paseos turísticos.",
-                PlaceCategory.ACTIVIDAD,
-                "Frente a Playa Sámara, Guanacaste",
-                "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80",
-                9.8725,
-                -85.5150
-        );
-
-        createPlace(
-                town,
-                "Centro Gastronómico Sámara",
-                "Zona con restaurantes locales, cafeterías y comida típica costarricense.",
-                PlaceCategory.RESTAURANTE,
-                "Centro de Sámara, Guanacaste",
-                "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
-                9.8820,
-                -85.5270
-        );
-
-        createPlace(
-                town,
-                "Mirador de Sámara",
-                "Punto panorámico para observar la costa y el entorno natural de la zona.",
-                PlaceCategory.MIRADOR,
-                "Zona alta de Sámara, Guanacaste",
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-                9.8870,
+                "Pequeña isla frente a Sámara, popular para kayak, snorkel y fotografía.",
+                PlaceCategory.PASEOS,
+                "Frente a Playa Sámara",
+                OCEAN_IMAGE_URL,
+                9.8705,
                 -85.5220
         );
 
-        createPlace(
-                town,
-                "Hotel Familiar Sámara",
-                "Hospedaje cercano a la playa, pensado para familias y turistas que buscan tranquilidad.",
-                PlaceCategory.HOTEL,
-                "Sámara, Guanacaste",
-                "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
-                9.8805,
-                -85.5290
+        savePlace(
+                savedTown,
+                "Mirador de Sámara",
+                "Punto panorámico para observar la bahía y los paisajes costeros de la zona.",
+                PlaceCategory.MIRADOR,
+                "Zona alta de Sámara",
+                NATURE_IMAGE_URL,
+                9.8890,
+                -85.5340
         );
     }
 
-    private void createPlace(
+    private void savePlace(
             Town town,
             String name,
             String description,
@@ -260,18 +218,16 @@ public class DataSeeder implements CommandLineRunner {
             Double latitude,
             Double longitude
     ) {
-        placeRepository.save(
-                Place.builder()
-                        .town(town)
-                        .name(name)
-                        .description(description)
-                        .category(category)
-                        .address(address)
-                        .imageUrl(imageUrl)
-                        .latitude(latitude)
-                        .longitude(longitude)
-                        .active(true)
-                        .build()
-        );
+        placeRepository.save(Place.builder()
+                .town(town)
+                .name(name)
+                .description(description)
+                .category(category)
+                .address(address)
+                .imageUrl(imageUrl)
+                .latitude(latitude)
+                .longitude(longitude)
+                .active(true)
+                .build());
     }
 }

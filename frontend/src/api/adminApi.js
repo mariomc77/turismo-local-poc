@@ -1,12 +1,17 @@
 import api from "./axiosConfig";
 
-export async function getAdminTowns() {
-  const response = await api.get("/admin/towns");
-  return response.data;
+function safePositiveId(value, fieldName = "id") {
+  const id = Number(value);
+
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error(`${fieldName} inválido`);
+  }
+
+  return String(id);
 }
 
-export async function getAdminTownById(id) {
-  const response = await api.get(`/admin/towns/${id}`);
+export async function getAdminTowns() {
+  const response = await api.get("/admin/towns");
   return response.data;
 }
 
@@ -16,26 +21,24 @@ export async function createAdminTown(town) {
 }
 
 export async function updateAdminTown(id, town) {
-  const response = await api.put(`/admin/towns/${id}`, town);
+  const safeId = safePositiveId(id, "townId");
+  const response = await api.put(`/admin/towns/${safeId}`, town);
   return response.data;
 }
 
 export async function toggleAdminTownActive(id) {
-  const response = await api.patch(`/admin/towns/${id}/toggle-active`);
+  const safeId = safePositiveId(id, "townId");
+  const response = await api.patch(`/admin/towns/${safeId}/toggle-active`);
   return response.data;
 }
 
 export async function deleteAdminTown(id) {
-  await api.delete(`/admin/towns/${id}`);
+  const safeId = safePositiveId(id, "townId");
+  await api.delete(`/admin/towns/${safeId}`);
 }
 
 export async function getAdminPlaces() {
   const response = await api.get("/admin/places");
-  return response.data;
-}
-
-export async function getAdminPlaceById(id) {
-  const response = await api.get(`/admin/places/${id}`);
   return response.data;
 }
 
@@ -45,17 +48,20 @@ export async function createAdminPlace(place) {
 }
 
 export async function updateAdminPlace(id, place) {
-  const response = await api.put(`/admin/places/${id}`, place);
+  const safeId = safePositiveId(id, "placeId");
+  const response = await api.put(`/admin/places/${safeId}`, place);
   return response.data;
 }
 
 export async function toggleAdminPlaceActive(id) {
-  const response = await api.patch(`/admin/places/${id}/toggle-active`);
+  const safeId = safePositiveId(id, "placeId");
+  const response = await api.patch(`/admin/places/${safeId}/toggle-active`);
   return response.data;
 }
 
 export async function deleteAdminPlace(id) {
-  await api.delete(`/admin/places/${id}`);
+  const safeId = safePositiveId(id, "placeId");
+  await api.delete(`/admin/places/${safeId}`);
 }
 
 export async function getAdminUsers() {
@@ -64,11 +70,7 @@ export async function getAdminUsers() {
 }
 
 export async function updateAdminUserRole(id, role) {
-  const response = await api.patch(`/admin/users/${id}/role`, { role });
-  return response.data;
-}
-
-export async function toggleAdminUserActive(id) {
-  const response = await api.patch(`/admin/users/${id}/toggle-active`);
+  const safeId = safePositiveId(id, "userId");
+  const response = await api.patch(`/admin/users/${safeId}/role`, { role });
   return response.data;
 }

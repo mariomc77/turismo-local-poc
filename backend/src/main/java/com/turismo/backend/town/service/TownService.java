@@ -7,41 +7,33 @@ import com.turismo.backend.town.repository.TownRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class TownService {
 
+    private static final String TOWN_NOT_FOUND_BY_SLUG = "Pueblo no encontrado: ";
+    private static final String TOWN_NOT_FOUND_BY_ID = "Pueblo no encontrado con id: ";
+
     private final TownRepository townRepository;
 
-    public List<TownResponse> getAllActiveTowns() {
-        return townRepository.findByActiveTrueOrderByNameAsc()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
-
     public TownResponse getTownBySlug(String slug) {
-        Town town = townRepository.findBySlugAndActiveTrue(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
-
+        Town town = findActiveTownBySlug(slug);
         return mapToResponse(town);
     }
 
     public Town findActiveTownBySlug(String slug) {
         return townRepository.findBySlugAndActiveTrue(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_SLUG + slug));
     }
 
     public Town findTownById(Long id) {
         return townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_ID + id));
     }
 
     public Town findTownBySlug(String slug) {
         return townRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_SLUG + slug));
     }
 
     public TownResponse mapToResponse(Town town) {
@@ -53,6 +45,8 @@ public class TownService {
                 .province(town.getProvince())
                 .country(town.getCountry())
                 .active(town.getActive())
+                .createdAt(town.getCreatedAt())
+                .updatedAt(town.getUpdatedAt())
                 .build();
     }
 }

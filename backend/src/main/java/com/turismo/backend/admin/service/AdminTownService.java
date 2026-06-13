@@ -18,6 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminTownService {
 
+    private static final String DEFAULT_COUNTRY = "Costa Rica";
+    private static final String TOWN_NOT_FOUND_BY_ID = "Pueblo no encontrado con id: ";
+    private static final String TOWN_NAME_REQUIRED = "El nombre del pueblo es obligatorio";
+    private static final String TOWN_SLUG_EXISTS = "Ya existe un pueblo con el slug: ";
+    private static final String OTHER_TOWN_SLUG_EXISTS = "Ya existe otro pueblo con el slug: ";
+
     private final TownRepository townRepository;
     private final TownService townService;
 
@@ -29,9 +35,7 @@ public class AdminTownService {
     }
 
     public TownResponse getTownById(Long id) {
-        Town town = townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
-
+        Town town = findTownById(id);
         return townService.mapToResponse(town);
     }
 
@@ -41,7 +45,7 @@ public class AdminTownService {
         String slug = resolveSlug(request.getSlug(), request.getName());
 
         if (townRepository.existsBySlug(slug)) {
-            throw new BadRequestException("Ya existe un pueblo con el slug: " + slug);
+            throw new BadRequestException(TOWN_SLUG_EXISTS + slug);
         }
 
         Town town = Town.builder()
@@ -49,7 +53,7 @@ public class AdminTownService {
                 .name(request.getName().trim())
                 .description(request.getDescription())
                 .province(request.getProvince())
-                .country(request.getCountry() == null || request.getCountry().isBlank() ? "Costa Rica" : request.getCountry())
+                .country(resolveCountry(request.getCountry()))
                 .active(request.getActive() == null || request.getActive())
                 .build();
 
@@ -57,47 +61,54 @@ public class AdminTownService {
     }
 
     public TownResponse updateTown(Long id, TownUpdateRequest request) {
-        Town town = townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
+        Town town = findTownById(id);
 
         validateTownRequest(request.getName());
 
         String slug = resolveSlug(request.getSlug(), request.getName());
 
         if (townRepository.existsBySlugAndIdNot(slug, id)) {
-            throw new BadRequestException("Ya existe otro pueblo con el slug: " + slug);
+            throw new BadRequestException(OTHER_TOWN_SLUG_EXISTS + slug);
         }
 
         town.setSlug(slug);
         town.setName(request.getName().trim());
         town.setDescription(request.getDescription());
         town.setProvince(request.getProvince());
-        town.setCountry(request.getCountry() == null || request.getCountry().isBlank() ? "Costa Rica" : request.getCountry());
+        town.setCountry(resolveCountry(request.getCountry()));
         town.setActive(request.getActive() == null || request.getActive());
 
         return townService.mapToResponse(townRepository.save(town));
     }
 
     public TownResponse toggleActive(Long id) {
-        Town town = townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
-
+        Town town = findTownById(id);
         town.setActive(!Boolean.TRUE.equals(town.getActive()));
-
         return townService.mapToResponse(townRepository.save(town));
     }
 
     public void deleteTown(Long id) {
-        Town town = townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
-
+        Town town = findTownById(id);
         townRepository.delete(town);
+    }
+
+    private Town findTownById(Long id) {
+        return townRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_ID + id));
     }
 
     private void validateTownRequest(String name) {
         if (name == null || name.isBlank()) {
-            throw new BadRequestException("El nombre del pueblo es obligatorio");
+            throw new BadRequestException(TOWN_NAME_REQUIRED);
         }
+    }
+
+    private String resolveCountry(String country) {
+        if (country == null || country.isBlank()) {
+            return DEFAULT_COUNTRY;
+        }
+
+        return country;
     }
 
     private String resolveSlug(String slug, String name) {
