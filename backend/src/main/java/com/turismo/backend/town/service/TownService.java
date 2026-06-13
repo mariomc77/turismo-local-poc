@@ -7,6 +7,8 @@ import com.turismo.backend.town.repository.TownRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TownService {
@@ -15,6 +17,13 @@ public class TownService {
     private static final String TOWN_NOT_FOUND_BY_ID = "Pueblo no encontrado con id: ";
 
     private final TownRepository townRepository;
+
+    public List<TownResponse> getAllActiveTowns() {
+        return townRepository.findByActiveTrueOrderByNameAsc()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
     public TownResponse getTownBySlug(String slug) {
         Town town = findActiveTownBySlug(slug);
