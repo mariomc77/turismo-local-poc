@@ -268,24 +268,24 @@ export default function AdminPlacesPage() {
     <AdminLayout>
       <section className="admin-page">
         <div className="admin-page-header">
-          <div>
-            <h1>Gestión de lugares turísticos</h1>
-            <p>
-              Administra los puntos de interés, actividades y servicios de cada
-              pueblo.
-            </p>
-          </div>
+  <div>
+    <h1>Gestión de lugares turísticos</h1>
+    <p>
+      Administra los puntos de interés, actividades y servicios de cada
+      pueblo.
+    </p>
+  </div>
+</div>
 
-          <div className="admin-header-actions">
-            <button
-              type="button"
-              className="btn-admin-primary"
-              onClick={handleNew}
-            >
-              + Agregar lugar
-            </button>
-          </div>
-        </div>
+<div className="admin-action-row">
+  <button
+    type="button"
+    className="btn-admin-primary"
+    onClick={handleNew}
+  >
+    + Agregar lugar
+  </button>
+</div>
 
         <div className="admin-panel">
           <div className="admin-place-filters">
