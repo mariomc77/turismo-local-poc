@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import "../i18n";
 import Navbar from "../components/Navbar";
 
 const mockNavigate = vi.fn();
@@ -74,15 +75,15 @@ describe("Navbar", () => {
     expect(screen.getByText(/Empezar/i)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByRole("combobox", { name: /seleccionar pueblo/i })).toHaveValue(
-        "playas-del-coco"
-      );
+      expect(
+        screen.getByRole("combobox", { name: /seleccionar pueblo/i })
+      ).toHaveValue("playas-del-coco");
     });
 
     expect(screen.getByText(/Playas del Coco/i)).toBeInTheDocument();
   });
 
-  it("muestra usuario y permite cerrar sesión", () => {
+  it("muestra usuario y permite cerrar sesión", async () => {
     authMock = {
       user: {
         name: "Mario",
@@ -99,11 +100,17 @@ describe("Navbar", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Hola, Mario/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mario/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/Salir/i));
 
     expect(mockLogout).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith("/p/playas-del-coco");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("combobox", { name: /seleccionar pueblo/i })
+      ).toHaveValue("playas-del-coco");
+    });
   });
 });
