@@ -192,4 +192,29 @@ describe("adminApi", () => {
     expect(api.patch).toHaveBeenCalledWith("/admin/users/8/toggle-active");
     expect(result).toEqual(response);
   });
+
+    it("getAdminTownById lanza error con id inválido", async () => {
+    await expect(getAdminTownById("abc")).rejects.toThrow("townId inválido");
+    expect(api.get).not.toHaveBeenCalled();
+  });
+
+  it("updateAdminTown lanza error con id negativo", async () => {
+    await expect(updateAdminTown(-1, { name: "Error" })).rejects.toThrow("townId inválido");
+    expect(api.put).not.toHaveBeenCalled();
+  });
+
+  it("deleteAdminPlace lanza error con id cero", async () => {
+    await expect(deleteAdminPlace(0)).rejects.toThrow("placeId inválido");
+    expect(api.delete).not.toHaveBeenCalled();
+  });
+
+  it("updateAdminUserRole lanza error con id decimal", async () => {
+    await expect(updateAdminUserRole(1.5, "ADMIN")).rejects.toThrow("userId inválido");
+    expect(api.patch).not.toHaveBeenCalled();
+  });
+
+  it("toggleAdminUserActive lanza error con id vacío", async () => {
+    await expect(toggleAdminUserActive("")).rejects.toThrow("userId inválido");
+    expect(api.patch).not.toHaveBeenCalled();
+  });
 });
