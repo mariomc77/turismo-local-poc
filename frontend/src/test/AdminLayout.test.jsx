@@ -25,7 +25,7 @@ describe("AdminLayout", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Mario Admin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hola, Mario Admin/i)).toBeInTheDocument();
     expect(screen.getByText(/Contenido Admin/i)).toBeInTheDocument();
   });
 
@@ -38,8 +38,28 @@ describe("AdminLayout", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Admin Local/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hola, Admin Local/i)).toBeInTheDocument();
     expect(screen.getByText(/Panel administrativo/i)).toBeInTheDocument();
+  });
+
+  it("muestra la inicial A cuando el usuario no tiene foto", () => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name: "Admin Sin Foto"
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <AdminLayout>
+          <span>Dashboard</span>
+        </AdminLayout>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
   });
 
   it("muestra el footer del panel administrativo", () => {

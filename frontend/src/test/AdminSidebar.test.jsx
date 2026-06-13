@@ -18,10 +18,15 @@ describe("AdminSidebar", () => {
     localStorage.clear();
   });
 
-  it("muestra las opciones principales del panel admin", () => {
+  it("muestra el título del sistema", () => {
     renderSidebar();
 
     expect(screen.getByText(/Turismo Local POC/i)).toBeInTheDocument();
+  });
+
+  it("muestra las opciones principales del panel admin", () => {
+    renderSidebar();
+
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/Pueblos/i)).toBeInTheDocument();
     expect(screen.getByText(/Lugares/i)).toBeInTheDocument();
@@ -33,6 +38,15 @@ describe("AdminSidebar", () => {
     renderSidebar();
 
     expect(screen.getByText(/Ajustes/i)).toBeInTheDocument();
+  });
+
+  it("marca la ruta actual como activa", () => {
+    renderSidebar("/admin/places");
+
+    const lugaresLink = screen.getByText(/Lugares/i).closest("a");
+
+    expect(lugaresLink).toHaveAttribute("href", "/admin/places");
+    expect(lugaresLink?.className).toContain("active");
   });
 
   it("cierra sesión limpiando localStorage", () => {

@@ -25,10 +25,22 @@ describe("authStorage", () => {
     expect(JSON.parse(localStorage.getItem("user"))).toEqual(user);
   });
 
+  it("saveAuth permite guardar usuario null", () => {
+    saveAuth("jwt-token", null);
+
+    expect(localStorage.getItem("token")).toBe("jwt-token");
+    expect(localStorage.getItem("user")).toBe("null");
+    expect(getStoredUser()).toBeNull();
+  });
+
   it("getToken retorna el token guardado", () => {
     localStorage.setItem("token", "jwt-token");
 
     expect(getToken()).toBe("jwt-token");
+  });
+
+  it("getToken retorna null si no hay token", () => {
+    expect(getToken()).toBeNull();
   });
 
   it("getStoredUser retorna null cuando no hay usuario", () => {
@@ -52,6 +64,12 @@ describe("authStorage", () => {
     expect(getStoredUser()).toBeNull();
   });
 
+  it("getStoredUser retorna valores simples si localStorage contiene JSON válido", () => {
+    localStorage.setItem("user", JSON.stringify("Mario"));
+
+    expect(getStoredUser()).toBe("Mario");
+  });
+
   it("clearAuth elimina token y usuario", () => {
     localStorage.setItem("token", "jwt-token");
     localStorage.setItem("user", JSON.stringify({ name: "Mario" }));
@@ -69,6 +87,12 @@ describe("authStorage", () => {
   });
 
   it("isAuthenticated retorna false si no existe token", () => {
+    expect(isAuthenticated()).toBe(false);
+  });
+
+  it("isAuthenticated retorna false si el token es string vacío", () => {
+    localStorage.setItem("token", "");
+
     expect(isAuthenticated()).toBe(false);
   });
 });
