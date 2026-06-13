@@ -45,34 +45,14 @@ const categoryFilterOptions = [
 ];
 
 const townCoordinates = {
-  "playas-del-coco": {
-    latitude: 10.5508,
-    longitude: -85.6976
-  },
-  tamarindo: {
-    latitude: 10.2993,
-    longitude: -85.8371
-  },
-  paquera: {
-    latitude: 9.8205,
-    longitude: -84.9356
-  },
-  brasilito: {
-    latitude: 10.4079,
-    longitude: -85.7982
-  },
-  "la-fortuna": {
-    latitude: 10.4714,
-    longitude: -84.6453
-  },
-  "puerto-viejo": {
-    latitude: 9.6561,
-    longitude: -82.7545
-  },
-  monteverde: {
-    latitude: 10.3167,
-    longitude: -84.8167
-  }
+  "playas-del-coco": { latitude: 10.5508, longitude: -85.6976 },
+  tamarindo: { latitude: 10.2993, longitude: -85.8371 },
+  samara: { latitude: 9.8819, longitude: -85.5287 },
+  paquera: { latitude: 9.8205, longitude: -84.9356 },
+  brasilito: { latitude: 10.4079, longitude: -85.7982 },
+  "la-fortuna": { latitude: 10.4714, longitude: -84.6453 },
+  "puerto-viejo": { latitude: 9.6561, longitude: -82.7545 },
+  monteverde: { latitude: 10.3167, longitude: -84.8167 }
 };
 
 function getAutomaticCoordinates(townSlug) {
@@ -113,13 +93,20 @@ export default function AdminPlacesPage() {
   };
 
   const getCategoryLabel = (categoryValue) => {
-    const found = categoryOptions.find((category) => category.value === categoryValue);
+    const found = categoryOptions.find(
+      (category) => category.value === categoryValue
+    );
+
     return found ? found.label : categoryValue || "Sin categoría";
   };
 
   const getCategoryValueByLabel = (label) => {
-    if (label === "Todos") return "Todos";
+    if (label === "Todos") {
+      return "Todos";
+    }
+
     const found = categoryOptions.find((category) => category.label === label);
+
     return found ? found.value : label;
   };
 
@@ -131,7 +118,8 @@ export default function AdminPlacesPage() {
       const address = place.address || "";
       const description = place.description || "";
 
-      const searchableText = `${name} ${townName} ${category} ${address} ${description}`.toLowerCase();
+      const searchableText =
+        `${name} ${townName} ${category} ${address} ${description}`.toLowerCase();
 
       const matchesSearch = searchableText.includes(searchText.toLowerCase());
 
@@ -155,6 +143,11 @@ export default function AdminPlacesPage() {
       ...current,
       [field]: value
     }));
+  };
+
+  const closeForm = () => {
+    setFormOpen(false);
+    setFormData(emptyPlace);
   };
 
   const handleNew = () => {
@@ -187,22 +180,27 @@ export default function AdminPlacesPage() {
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("¿Deseas eliminar este lugar?");
-    if (!confirmDelete) return;
+
+    if (!confirmDelete) {
+      return;
+    }
 
     await deleteAdminPlace(id);
 
     setPlaces((current) => current.filter((place) => place.id !== id));
 
     if (formData?.id === id) {
-      setFormData(emptyPlace);
-      setFormOpen(false);
+      closeForm();
     }
 
     alert("Lugar eliminado correctamente");
   };
 
   const buildPayload = () => {
-    const selectedTownData = towns.find((town) => town.slug === formData.townSlug);
+    const selectedTownData = towns.find(
+      (town) => town.slug === formData.townSlug
+    );
+
     const automaticCoordinates = getAutomaticCoordinates(formData.townSlug);
 
     return {
@@ -247,7 +245,7 @@ export default function AdminPlacesPage() {
       );
 
       alert("Lugar actualizado correctamente");
-      setFormOpen(false);
+      closeForm();
       return;
     }
 
@@ -255,72 +253,68 @@ export default function AdminPlacesPage() {
 
     setPlaces((current) => [createdPlace, ...current]);
 
-    setFormData({
-      id: createdPlace.id,
-      townSlug: createdPlace.townSlug || "",
-      townName: createdPlace.townName || "",
-      name: createdPlace.name || "",
-      category: createdPlace.category || "PLAYA",
-      address: createdPlace.address || "",
-      active: createdPlace.active !== false,
-      description: createdPlace.description || "",
-      imageUrl: createdPlace.imageUrl || ""
-    });
-
     alert("Lugar agregado correctamente");
-    setFormOpen(false);
+    closeForm();
   };
 
   if (loading) {
     return (
       <AdminLayout>
-        <LoadingSpinner />
+        <LoadingSpinner message="Cargando lugares turísticos..." />
       </AdminLayout>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="admin-page-header">
-        <div>
-          <h1>Gestión de lugares turísticos</h1>
-          <p>Administra los puntos de interés, actividades y servicios de cada pueblo.</p>
+      <section className="admin-page">
+        <div className="admin-page-header">
+          <div>
+            <h1>Gestión de lugares turísticos</h1>
+            <p>
+              Administra los puntos de interés, actividades y servicios de cada
+              pueblo.
+            </p>
+          </div>
+
+          <div className="admin-header-actions">
+            <button
+              type="button"
+              className="btn-admin-primary"
+              onClick={handleNew}
+            >
+              + Agregar lugar
+            </button>
+          </div>
         </div>
 
-        <button className="btn-admin-primary" onClick={handleNew}>
-          + Agregar lugar
-        </button>
-      </div>
-
-      <div className="admin-places-layout">
-        <section className="admin-panel">
+        <div className="admin-panel">
           <div className="admin-place-filters">
-            <div>
-              <label>Buscar lugar</label>
-              <SearchBar
-                value={searchText}
-                onChange={setSearchText}
-                placeholder="Nombre, dirección o descripción..."
-              />
-            </div>
+            <SearchBar
+              value={searchText}
+              onChange={setSearchText}
+              placeholder="Nombre, dirección o descripción"
+              label="Buscar lugar"
+            />
 
-            <div>
-              <label>Filtrar por pueblo</label>
+            <label>
+              Filtrar por pueblo
               <select
                 value={selectedTown}
                 onChange={(event) => setSelectedTown(event.target.value)}
               >
                 <option value="Todos">Todos</option>
+
                 {towns.map((town) => (
                   <option key={town.id} value={town.slug}>
                     {town.name}
                   </option>
                 ))}
               </select>
-            </div>
+            </label>
 
-            <div>
-              <label>Categoría</label>
+            <label>
+              Categoría
               <select
                 value={selectedCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
@@ -331,13 +325,13 @@ export default function AdminPlacesPage() {
                   </option>
                 ))}
               </select>
-            </div>
+            </label>
           </div>
 
           <CategoryFilter
             categories={categoryFilterOptions}
             selectedCategory={selectedCategory}
-            onSelect={setSelectedCategory}
+            onSelectCategory={setSelectedCategory}
           />
 
           <div className="places-admin-table">
@@ -355,154 +349,191 @@ export default function AdminPlacesPage() {
                 <img
                   src={place.imageUrl || fallbackImage}
                   alt={place.name}
+                  onError={(event) => {
+                    event.currentTarget.src = fallbackImage;
+                  }}
                 />
 
                 <strong>{place.name}</strong>
-
                 <span>{place.townName || "Sin pueblo"}</span>
-
                 <span>{getCategoryLabel(place.category)}</span>
-
                 <span>{place.address || "Sin dirección"}</span>
 
                 <div className="admin-actions">
-                  <button onClick={() => handleEdit(place)}>Editar</button>
+                  <button type="button" onClick={() => handleEdit(place)}>
+                    Editar
+                  </button>
 
-                  <button className="danger" onClick={() => handleDelete(place.id)}>
+                  <button
+                    type="button"
+                    className="danger"
+                    onClick={() => handleDelete(place.id)}
+                  >
                     Eliminar
                   </button>
                 </div>
               </div>
             ))}
+
+            {filteredPlaces.length === 0 && (
+              <div className="admin-empty-state">
+                <h3>No hay lugares registrados</h3>
+                <p>Puedes agregar un lugar nuevo con el botón superior.</p>
+              </div>
+            )}
           </div>
 
-          {filteredPlaces.length === 0 && (
-            <div className="text-center py-5">
-              <h3 className="fw-bold">No hay lugares registrados</h3>
-              <p className="text-muted">
-                Puedes agregar un lugar nuevo con el botón superior.
-              </p>
-            </div>
-          )}
-
-          <p className="small text-muted mt-3">
-            Mostrando {filteredPlaces.length} de {places.length} lugares registrados.
+          <p className="admin-table-summary">
+            Mostrando {filteredPlaces.length} de {places.length} lugares
+            registrados.
           </p>
-        </section>
+        </div>
 
         {formOpen && (
-          <aside className="admin-edit-panel">
-            <div className="admin-edit-header">
-              <div>
-                <h2>{formData.id ? "Editar Lugar Turístico" : "Agregar Lugar Turístico"}</h2>
-                <p>Completa los campos para guardar la información del lugar.</p>
-              </div>
-
-              <button onClick={() => setFormOpen(false)}>×</button>
-            </div>
-
-            <form className="admin-form">
-              <label>
-                Nombre del lugar
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(event) => handleChange("name", event.target.value)}
-                />
-              </label>
-
-              <label>
-                Descripción
-                <textarea
-                  value={formData.description}
-                  onChange={(event) => handleChange("description", event.target.value)}
-                />
-              </label>
-
-              <div className="admin-form-grid">
-                <label>
-                  Categoría
-                  <select
-                    value={formData.category}
-                    onChange={(event) => handleChange("category", event.target.value)}
-                  >
-                    {categoryOptions.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label>
-                  Pueblo
-                  <select
-                    value={formData.townSlug}
-                    onChange={(event) => handleChange("townSlug", event.target.value)}
-                  >
-                    {towns.map((town) => (
-                      <option key={town.id} value={town.slug}>
-                        {town.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label>
-                Dirección exacta
-                <textarea
-                  value={formData.address}
-                  onChange={(event) => handleChange("address", event.target.value)}
-                />
-              </label>
-
-              <label>
-                URL de la imagen
-                <input
-                  type="text"
-                  value={formData.imageUrl}
-                  onChange={(event) => handleChange("imageUrl", event.target.value)}
-                />
-              </label>
-
-              <div className="active-box">
-                <input
-                  type="checkbox"
-                  checked={formData.active}
-                  onChange={(event) => handleChange("active", event.target.checked)}
-                />
-
+          <div className="admin-modal-backdrop" onClick={closeForm}>
+            <div
+              className="admin-modal admin-modal-lg"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="admin-modal-header">
                 <div>
-                  <strong>Estado activo</strong>
+                  <h2>
+                    {formData.id
+                      ? "Editar Lugar Turístico"
+                      : "Agregar Lugar Turístico"}
+                  </h2>
                   <p>
-                    Habilita o deshabilita la visibilidad de este lugar para los turistas.
-                    Las coordenadas del mapa se asignan automáticamente según el pueblo.
+                    Completa los campos para guardar la información del lugar.
                   </p>
                 </div>
-              </div>
-
-              <div className="admin-form-actions">
-                <button
-                  type="button"
-                  className="btn-admin-secondary"
-                  onClick={() => setFormOpen(false)}
-                >
-                  Cancelar
-                </button>
 
                 <button
                   type="button"
-                  className="btn-admin-primary"
-                  onClick={handleSave}
+                  className="admin-modal-close"
+                  onClick={closeForm}
+                  aria-label="Cerrar formulario"
                 >
-                  Guardar Cambios
+                  ×
                 </button>
               </div>
-            </form>
-          </aside>
+
+              <form className="admin-form" onSubmit={(event) => event.preventDefault()}>
+                <label>
+                  Nombre del lugar
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(event) => handleChange("name", event.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Descripción
+                  <textarea
+                    value={formData.description}
+                    onChange={(event) =>
+                      handleChange("description", event.target.value)
+                    }
+                  />
+                </label>
+
+                <div className="admin-form-grid">
+                  <label>
+                    Categoría
+                    <select
+                      value={formData.category}
+                      onChange={(event) =>
+                        handleChange("category", event.target.value)
+                      }
+                    >
+                      {categoryOptions.map((category) => (
+                        <option key={category.value} value={category.value}>
+                          {category.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label>
+                    Pueblo
+                    <select
+                      value={formData.townSlug}
+                      onChange={(event) =>
+                        handleChange("townSlug", event.target.value)
+                      }
+                    >
+                      {towns.map((town) => (
+                        <option key={town.id} value={town.slug}>
+                          {town.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <label>
+                  Dirección exacta
+                  <textarea
+                    value={formData.address}
+                    onChange={(event) =>
+                      handleChange("address", event.target.value)
+                    }
+                  />
+                </label>
+
+                <label>
+                  URL de la imagen
+                  <input
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={(event) =>
+                      handleChange("imageUrl", event.target.value)
+                    }
+                    placeholder="https://ejemplo.com/imagen.jpg"
+                  />
+                </label>
+
+                <div className="active-box">
+                  <input
+                    type="checkbox"
+                    checked={formData.active}
+                    onChange={(event) =>
+                      handleChange("active", event.target.checked)
+                    }
+                  />
+
+                  <div>
+                    <strong>Estado activo</strong>
+                    <p>
+                      Habilita o deshabilita la visibilidad de este lugar para
+                      los turistas. Las coordenadas del mapa se asignan
+                      automáticamente según el pueblo.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="admin-form-actions">
+                  <button
+                    type="button"
+                    className="btn-admin-secondary"
+                    onClick={closeForm}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-admin-primary"
+                    onClick={handleSave}
+                  >
+                    Guardar Cambios
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
-      </div>
+      </section>
     </AdminLayout>
   );
 }

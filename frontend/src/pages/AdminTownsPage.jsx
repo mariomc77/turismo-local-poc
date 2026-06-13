@@ -36,7 +36,9 @@ export default function AdminTownsPage() {
   const loadTowns = async () => {
     try {
       setLoading(true);
+
       const data = await getAdminTowns();
+
       setTowns(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
@@ -47,12 +49,14 @@ export default function AdminTownsPage() {
     return towns.filter((town) => {
       const name = town.name || "";
       const slug = town.slug || "";
+
       const matchesSearch =
         name.toLowerCase().includes(searchText.toLowerCase()) ||
         slug.toLowerCase().includes(searchText.toLowerCase());
 
       const currentStatus = town.active ? "Activo" : "Inactivo";
-      const matchesStatus = statusFilter === "Todos" || currentStatus === statusFilter;
+      const matchesStatus =
+        statusFilter === "Todos" || currentStatus === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
@@ -74,6 +78,11 @@ export default function AdminTownsPage() {
       .replace(/-+/g, "-");
   };
 
+  const closeForm = () => {
+    setFormOpen(false);
+    setFormData(emptyTown);
+  };
+
   const handleNew = () => {
     setFormData(emptyTown);
     setFormOpen(true);
@@ -89,6 +98,7 @@ export default function AdminTownsPage() {
       country: town.country || "Costa Rica",
       active: town.active !== false
     });
+
     setFormOpen(true);
   };
 
@@ -106,7 +116,9 @@ export default function AdminTownsPage() {
     }
 
     const payload = {
-      slug: formData.slug.trim() ? normalizeSlug(formData.slug) : normalizeSlug(formData.name),
+      slug: formData.slug.trim()
+        ? normalizeSlug(formData.slug)
+        : normalizeSlug(formData.name),
       name: formData.name.trim(),
       description: formData.description,
       province: formData.province,
@@ -122,16 +134,16 @@ export default function AdminTownsPage() {
       );
 
       alert("Pueblo actualizado correctamente");
-      setFormOpen(false);
+      closeForm();
       return;
     }
 
     const createdTown = await createAdminTown(payload);
 
     setTowns((current) => [createdTown, ...current]);
-    setFormData(createdTown);
+
     alert("Pueblo creado correctamente");
-    setFormOpen(false);
+    closeForm();
   };
 
   const handleToggleStatus = async (id) => {
@@ -156,8 +168,7 @@ export default function AdminTownsPage() {
     setTowns((current) => current.filter((item) => item.id !== town.id));
 
     if (formData.id === town.id) {
-      setFormData(emptyTown);
-      setFormOpen(false);
+      closeForm();
     }
 
     alert("Pueblo eliminado correctamente");
@@ -182,7 +193,9 @@ export default function AdminTownsPage() {
       render: (row) => (
         <div>
           <strong>{row.name}</strong>
-          <div className="text-muted small">{row.description || "Sin descripción"}</div>
+          <p className="admin-table-description">
+            {row.description || "Sin descripción"}
+          </p>
         </div>
       )
     },
@@ -195,7 +208,7 @@ export default function AdminTownsPage() {
       key: "active",
       label: "Estado",
       render: (row) => (
-        <span className={`badge rounded-pill ${row.active ? "bg-success" : "bg-secondary"}`}>
+        <span className={row.active ? "status-active" : "status-inactive"}>
           {row.active ? "Activo" : "Inactivo"}
         </span>
       )
@@ -222,151 +235,209 @@ export default function AdminTownsPage() {
 
   return (
     <AdminLayout>
-      <section className="admin-section">
-        <div className="admin-section-header">
+      <section className="admin-page">
+        <div className="admin-page-header">
           <div>
             <h1>Gestión de pueblos</h1>
-            <p>Administra los destinos turísticos principales disponibles en la plataforma.</p>
+            <p>
+              Administra los destinos turísticos principales disponibles en la
+              plataforma.
+            </p>
           </div>
-          <button type="button" className="btn-admin-primary" onClick={handleNew}>
-            + Agregar pueblo
-          </button>
+
+          <div className="admin-header-actions">
+            <button
+              type="button"
+              className="btn-admin-primary"
+              onClick={handleNew}
+            >
+              + Agregar pueblo
+            </button>
+          </div>
         </div>
 
-        <div className="admin-toolbar">
-          <SearchBar
-            value={searchText}
-            onChange={setSearchText}
-            placeholder="Buscar pueblo"
+        <div className="admin-panel">
+          <div className="admin-filter-row">
+            <SearchBar
+              value={searchText}
+              onChange={setSearchText}
+              placeholder="Buscar pueblo"
+              label="Buscar pueblo"
+            />
+
+            <select
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              aria-label="Filtrar por estado"
+            >
+              <option value="Todos">Todos</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+
+            <div className="admin-mini-stat">
+              <span>Total de pueblos</span>
+              <strong>{filteredTowns.length}</strong>
+              <small>Destinos</small>
+            </div>
+          </div>
+
+          <AdminTable
+            columns={columns}
+            data={filteredTowns}
+            renderActions={(row) => (
+              <div className="admin-actions">
+                <button
+                  type="button"
+                  onClick={() => window.open(`/p/${row.slug}`, "_blank")}
+                >
+                  Ver
+                </button>
+
+                <button type="button" onClick={() => handleEdit(row)}>
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleToggleStatus(row.id)}
+                >
+                  {row.active ? "Desactivar" : "Activar"}
+                </button>
+
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={() => handleDelete(row)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            )}
           />
-
-          <select
-            className="form-select"
-            value={statusFilter}
-            onChange={(event) => setStatusFilter(event.target.value)}
-          >
-            <option value="Todos">Todos</option>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-          </select>
-        </div>
-
-        <div className="admin-stats-grid">
-          <div className="admin-stat-card">
-            <span>Total de pueblos</span>
-            <strong>{filteredTowns.length}</strong>
-            <small>Destinos</small>
-          </div>
         </div>
 
         {formOpen && (
-          <section className="admin-form-panel">
-            <div className="admin-form-header">
-              <div>
-                <h2>{formData.id ? "Editar pueblo" : "Agregar pueblo"}</h2>
-                <p>Completa los datos básicos del destino turístico.</p>
+          <div className="admin-modal-backdrop" onClick={closeForm}>
+            <div
+              className="admin-modal admin-modal-lg"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="admin-modal-header">
+                <div>
+                  <h2>{formData.id ? "Editar pueblo" : "Agregar pueblo"}</h2>
+                  <p>Completa los datos básicos del destino turístico.</p>
+                </div>
+
+                <button
+                  type="button"
+                  className="admin-modal-close"
+                  onClick={closeForm}
+                  aria-label="Cerrar formulario"
+                >
+                  ×
+                </button>
               </div>
-              <button type="button" onClick={() => setFormOpen(false)}>
-                Cerrar
-              </button>
+
+              <form className="admin-form" onSubmit={(event) => event.preventDefault()}>
+                <div className="admin-form-grid">
+                  <label>
+                    Nombre
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(event) =>
+                        handleChange("name", event.target.value)
+                      }
+                    />
+                  </label>
+
+                  <label>
+                    Slug
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(event) =>
+                        handleChange("slug", event.target.value)
+                      }
+                      placeholder="playas-del-coco"
+                    />
+                  </label>
+                </div>
+
+                <label>
+                  Descripción
+                  <textarea
+                    value={formData.description}
+                    onChange={(event) =>
+                      handleChange("description", event.target.value)
+                    }
+                  />
+                </label>
+
+                <div className="admin-form-grid">
+                  <label>
+                    Provincia
+                    <input
+                      type="text"
+                      value={formData.province}
+                      onChange={(event) =>
+                        handleChange("province", event.target.value)
+                      }
+                    />
+                  </label>
+
+                  <label>
+                    País
+                    <input
+                      type="text"
+                      value={formData.country}
+                      onChange={(event) =>
+                        handleChange("country", event.target.value)
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="active-box">
+                  <input
+                    type="checkbox"
+                    checked={formData.active}
+                    onChange={(event) =>
+                      handleChange("active", event.target.checked)
+                    }
+                  />
+
+                  <div>
+                    <strong>Estado activo</strong>
+                    <p>
+                      Permite que el pueblo aparezca públicamente para los
+                      turistas.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="admin-form-actions">
+                  <button
+                    type="button"
+                    className="btn-admin-secondary"
+                    onClick={closeForm}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-admin-primary"
+                    onClick={handleSave}
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <div className="admin-form-grid">
-              <label>
-                Nombre
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(event) => handleChange("name", event.target.value)}
-                />
-              </label>
-
-              <label>
-                Slug
-                <input
-                  type="text"
-                  value={formData.slug}
-                  onChange={(event) => handleChange("slug", event.target.value)}
-                  placeholder="playas-del-coco"
-                />
-              </label>
-            </div>
-
-            <label>
-              Descripción
-              <textarea
-                value={formData.description}
-                onChange={(event) => handleChange("description", event.target.value)}
-              />
-            </label>
-
-            <div className="admin-form-grid">
-              <label>
-                Provincia
-                <input
-                  type="text"
-                  value={formData.province}
-                  onChange={(event) => handleChange("province", event.target.value)}
-                />
-              </label>
-
-              <label>
-                País
-                <input
-                  type="text"
-                  value={formData.country}
-                  onChange={(event) => handleChange("country", event.target.value)}
-                />
-              </label>
-            </div>
-
-            <div className="active-box">
-              <input
-                type="checkbox"
-                checked={formData.active}
-                onChange={(event) => handleChange("active", event.target.checked)}
-              />
-              <div>
-                <strong>Estado activo</strong>
-                <p>Permite que el pueblo aparezca públicamente para los turistas.</p>
-              </div>
-            </div>
-
-            <div className="admin-form-actions">
-              <button
-                type="button"
-                className="btn-admin-secondary"
-                onClick={() => setFormOpen(false)}
-              >
-                Cancelar
-              </button>
-              <button type="button" className="btn-admin-primary" onClick={handleSave}>
-                Guardar
-              </button>
-            </div>
-          </section>
+          </div>
         )}
-
-        <AdminTable
-          columns={columns}
-          data={filteredTowns}
-          renderActions={(row) => (
-            <div className="admin-actions">
-              <button type="button" onClick={() => window.open(`/p/${row.slug}`, "_blank")}>
-                Ver
-              </button>
-              <button type="button" onClick={() => handleEdit(row)}>
-                Editar
-              </button>
-              <button type="button" onClick={() => handleToggleStatus(row.id)}>
-                {row.active ? "Desactivar" : "Activar"}
-              </button>
-              <button type="button" className="danger" onClick={() => handleDelete(row)}>
-                Eliminar
-              </button>
-            </div>
-          )}
-        />
       </section>
     </AdminLayout>
   );
