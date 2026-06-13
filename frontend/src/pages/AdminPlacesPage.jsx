@@ -131,8 +131,7 @@ export default function AdminPlacesPage() {
       const selectedCategoryValue = getCategoryValueByLabel(selectedCategory);
 
       const matchesCategory =
-        selectedCategoryValue === "Todos" ||
-        category === selectedCategoryValue;
+        selectedCategoryValue === "Todos" || category === selectedCategoryValue;
 
       return matchesSearch && matchesTown && matchesCategory;
     });
@@ -390,14 +389,16 @@ export default function AdminPlacesPage() {
         </div>
 
         {formOpen && (
-          <div className="admin-modal-backdrop" onClick={closeForm}>
+          <div className="admin-modal-backdrop">
             <div
               className="admin-modal admin-modal-lg"
-              onClick={(event) => event.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="place-modal-title"
             >
               <div className="admin-modal-header">
                 <div>
-                  <h2>
+                  <h2 id="place-modal-title">
                     {formData.id
                       ? "Editar Lugar Turístico"
                       : "Agregar Lugar Turístico"}
@@ -417,7 +418,10 @@ export default function AdminPlacesPage() {
                 </button>
               </div>
 
-              <form className="admin-form" onSubmit={(event) => event.preventDefault()}>
+              <form
+                className="admin-form"
+                onSubmit={(event) => event.preventDefault()}
+              >
                 <label>
                   Nombre del lugar
                   <input
@@ -500,6 +504,7 @@ export default function AdminPlacesPage() {
                     onChange={(event) =>
                       handleChange("active", event.target.checked)
                     }
+                    aria-label="Estado activo"
                   />
 
                   <div>

@@ -318,14 +318,18 @@ export default function AdminTownsPage() {
         </div>
 
         {formOpen && (
-          <div className="admin-modal-backdrop" onClick={closeForm}>
+          <div className="admin-modal-backdrop">
             <div
               className="admin-modal admin-modal-lg"
-              onClick={(event) => event.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="town-modal-title"
             >
               <div className="admin-modal-header">
                 <div>
-                  <h2>{formData.id ? "Editar pueblo" : "Agregar pueblo"}</h2>
+                  <h2 id="town-modal-title">
+                    {formData.id ? "Editar pueblo" : "Agregar pueblo"}
+                  </h2>
                   <p>Completa los datos básicos del destino turístico.</p>
                 </div>
 
@@ -339,7 +343,10 @@ export default function AdminTownsPage() {
                 </button>
               </div>
 
-              <form className="admin-form" onSubmit={(event) => event.preventDefault()}>
+              <form
+                className="admin-form"
+                onSubmit={(event) => event.preventDefault()}
+              >
                 <div className="admin-form-grid">
                   <label>
                     Nombre
@@ -406,6 +413,7 @@ export default function AdminTownsPage() {
                     onChange={(event) =>
                       handleChange("active", event.target.checked)
                     }
+                    aria-label="Estado activo"
                   />
 
                   <div>
