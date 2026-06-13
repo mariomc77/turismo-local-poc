@@ -19,6 +19,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminPlaceService {
 
+    private static final String PLACE_NOT_FOUND_BY_ID = "Lugar no encontrado con id: ";
+    private static final String TOWN_REQUIRED = "Debe indicar townId o townSlug";
+    private static final String PLACE_NAME_REQUIRED = "El nombre del lugar es obligatorio";
+    private static final String PLACE_CATEGORY_REQUIRED = "La categoría del lugar es obligatoria";
+
     private final PlaceRepository placeRepository;
     private final TownService townService;
     private final PlaceService placeService;
@@ -31,9 +36,7 @@ public class AdminPlaceService {
     }
 
     public PlaceResponse getPlaceById(Long id) {
-        Place place = placeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado con id: " + id));
-
+        Place place = findPlaceById(id);
         return placeService.mapToResponse(place);
     }
 
@@ -60,9 +63,7 @@ public class AdminPlaceService {
     public PlaceResponse updatePlace(Long id, PlaceUpdateRequest request) {
         validatePlaceRequest(request);
 
-        Place place = placeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado con id: " + id));
-
+        Place place = findPlaceById(id);
         Town town = resolveTown(request.getTownId(), request.getTownSlug());
 
         place.setTown(town);
@@ -79,19 +80,19 @@ public class AdminPlaceService {
     }
 
     public PlaceResponse toggleActive(Long id) {
-        Place place = placeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado con id: " + id));
-
+        Place place = findPlaceById(id);
         place.setActive(!place.getActive());
-
         return placeService.mapToResponse(placeRepository.save(place));
     }
 
     public void deletePlace(Long id) {
-        Place place = placeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado con id: " + id));
-
+        Place place = findPlaceById(id);
         placeRepository.delete(place);
+    }
+
+    private Place findPlaceById(Long id) {
+        return placeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PLACE_NOT_FOUND_BY_ID + id));
     }
 
     private Town resolveTown(Long townId, String townSlug) {
@@ -103,26 +104,26 @@ public class AdminPlaceService {
             return townService.findTownBySlug(townSlug);
         }
 
-        throw new BadRequestException("Debe indicar townId o townSlug");
+        throw new BadRequestException(TOWN_REQUIRED);
     }
 
     private void validatePlaceRequest(PlaceCreateRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            throw new BadRequestException("El nombre del lugar es obligatorio");
+            throw new BadRequestException(PLACE_NAME_REQUIRED);
         }
 
         if (request.getCategory() == null) {
-            throw new BadRequestException("La categoría del lugar es obligatoria");
+            throw new BadRequestException(PLACE_CATEGORY_REQUIRED);
         }
     }
 
     private void validatePlaceRequest(PlaceUpdateRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            throw new BadRequestException("El nombre del lugar es obligatorio");
+            throw new BadRequestException(PLACE_NAME_REQUIRED);
         }
 
         if (request.getCategory() == null) {
-            throw new BadRequestException("La categoría del lugar es obligatoria");
+            throw new BadRequestException(PLACE_CATEGORY_REQUIRED);
         }
     }
 }
