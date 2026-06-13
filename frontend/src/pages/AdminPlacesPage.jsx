@@ -327,11 +327,7 @@ export default function AdminPlacesPage() {
             </label>
           </div>
 
-          <CategoryFilter
-            categories={categoryFilterOptions}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
+        
 
           <div className="places-admin-table">
             <div className="places-admin-head">
