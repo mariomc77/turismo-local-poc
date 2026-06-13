@@ -45,14 +45,41 @@ export default function AdminTownsPage() {
     }
   };
 
+  const formatAuditDate = (date) => {
+    if (!date) {
+      return "Sin registro";
+    }
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "Sin registro";
+    }
+
+    return parsedDate.toLocaleString("es-CR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+
+  const getAuditUser = (value) => {
+    return value || "Sistema";
+  };
+
   const filteredTowns = useMemo(() => {
     return towns.filter((town) => {
       const name = town.name || "";
       const slug = town.slug || "";
+      const createdBy = town.createdBy || "";
+      const updatedBy = town.updatedBy || "";
 
-      const matchesSearch =
-        name.toLowerCase().includes(searchText.toLowerCase()) ||
-        slug.toLowerCase().includes(searchText.toLowerCase());
+      const searchableText =
+        `${name} ${slug} ${createdBy} ${updatedBy}`.toLowerCase();
+
+      const matchesSearch = searchableText.includes(searchText.toLowerCase());
 
       const currentStatus = town.active ? "Activo" : "Inactivo";
       const matchesStatus =
@@ -174,18 +201,6 @@ export default function AdminTownsPage() {
     alert("Pueblo eliminado correctamente");
   };
 
-  const formatDate = (date) => {
-    if (!date) {
-      return "Sin fecha";
-    }
-
-    return new Date(date).toLocaleDateString("es-CR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    });
-  };
-
   const columns = [
     {
       key: "name",
@@ -219,9 +234,24 @@ export default function AdminTownsPage() {
       render: (row) => row.province || "Sin provincia"
     },
     {
+      key: "createdAt",
+      label: "Creado",
+      render: (row) => formatAuditDate(row.createdAt)
+    },
+    {
       key: "updatedAt",
-      label: "Última modificación",
-      render: (row) => formatDate(row.updatedAt)
+      label: "Actualizado",
+      render: (row) => formatAuditDate(row.updatedAt)
+    },
+    {
+      key: "createdBy",
+      label: "Creado por",
+      render: (row) => getAuditUser(row.createdBy)
+    },
+    {
+      key: "updatedBy",
+      label: "Actualizado por",
+      render: (row) => getAuditUser(row.updatedBy)
     }
   ];
 
@@ -261,7 +291,7 @@ export default function AdminTownsPage() {
             <SearchBar
               value={searchText}
               onChange={setSearchText}
-              placeholder="Buscar pueblo"
+              placeholder="Buscar pueblo o auditoría"
               label="Buscar pueblo"
             />
 

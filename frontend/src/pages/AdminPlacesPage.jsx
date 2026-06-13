@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import SearchBar from "../components/SearchBar";
-import CategoryFilter from "../components/CategoryFilter";
 import LoadingSpinner from "../components/LoadingSpinner";
 import {
   createAdminPlace,
@@ -92,6 +91,30 @@ export default function AdminPlacesPage() {
     }
   };
 
+  const formatAuditDate = (date) => {
+    if (!date) {
+      return "Sin registro";
+    }
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "Sin registro";
+    }
+
+    return parsedDate.toLocaleString("es-CR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+
+  const getAuditUser = (value) => {
+    return value || "Sistema";
+  };
+
   const getCategoryLabel = (categoryValue) => {
     const found = categoryOptions.find(
       (category) => category.value === categoryValue
@@ -117,9 +140,11 @@ export default function AdminPlacesPage() {
       const category = place.category || "";
       const address = place.address || "";
       const description = place.description || "";
+      const createdBy = place.createdBy || "";
+      const updatedBy = place.updatedBy || "";
 
       const searchableText =
-        `${name} ${townName} ${category} ${address} ${description}`.toLowerCase();
+        `${name} ${townName} ${category} ${address} ${description} ${createdBy} ${updatedBy}`.toLowerCase();
 
       const matchesSearch = searchableText.includes(searchText.toLowerCase());
 
@@ -268,31 +293,31 @@ export default function AdminPlacesPage() {
     <AdminLayout>
       <section className="admin-page">
         <div className="admin-page-header">
-  <div>
-    <h1>Gestión de lugares turísticos</h1>
-    <p>
-      Administra los puntos de interés, actividades y servicios de cada
-      pueblo.
-    </p>
-  </div>
-</div>
+          <div>
+            <h1>Gestión de lugares turísticos</h1>
+            <p>
+              Administra los puntos de interés, actividades y servicios de cada
+              pueblo.
+            </p>
+          </div>
+        </div>
 
-<div className="admin-action-row">
-  <button
-    type="button"
-    className="btn-admin-primary"
-    onClick={handleNew}
-  >
-    + Agregar lugar
-  </button>
-</div>
+        <div className="admin-action-row">
+          <button
+            type="button"
+            className="btn-admin-primary"
+            onClick={handleNew}
+          >
+            + Agregar lugar
+          </button>
+        </div>
 
         <div className="admin-panel">
           <div className="admin-place-filters">
             <SearchBar
               value={searchText}
               onChange={setSearchText}
-              placeholder="Nombre, dirección o descripción"
+              placeholder="Nombre, dirección, descripción o auditoría"
               label="Buscar lugar"
             />
 
@@ -327,15 +352,17 @@ export default function AdminPlacesPage() {
             </label>
           </div>
 
-        
-
-          <div className="places-admin-table">
+          <div className="places-admin-table places-admin-table-audit">
             <div className="places-admin-head">
               <span>Imagen</span>
               <span>Nombre</span>
               <span>Pueblo</span>
               <span>Categoría</span>
               <span>Dirección</span>
+              <span>Creado</span>
+              <span>Actualizado</span>
+              <span>Creado por</span>
+              <span>Actualizado por</span>
               <span>Acciones</span>
             </div>
 
@@ -353,6 +380,10 @@ export default function AdminPlacesPage() {
                 <span>{place.townName || "Sin pueblo"}</span>
                 <span>{getCategoryLabel(place.category)}</span>
                 <span>{place.address || "Sin dirección"}</span>
+                <span>{formatAuditDate(place.createdAt)}</span>
+                <span>{formatAuditDate(place.updatedAt)}</span>
+                <span>{getAuditUser(place.createdBy)}</span>
+                <span>{getAuditUser(place.updatedBy)}</span>
 
                 <div className="admin-actions">
                   <button type="button" onClick={() => handleEdit(place)}>
@@ -423,7 +454,9 @@ export default function AdminPlacesPage() {
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(event) => handleChange("name", event.target.value)}
+                    onChange={(event) =>
+                      handleChange("name", event.target.value)
+                    }
                   />
                 </label>
 
