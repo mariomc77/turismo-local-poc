@@ -13,6 +13,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TownService {
 
+    private static final String TOWN_NOT_FOUND_BY_SLUG = "Pueblo no encontrado: ";
+    private static final String TOWN_NOT_FOUND_BY_ID = "Pueblo no encontrado con id: ";
+
     private final TownRepository townRepository;
 
     public List<TownResponse> getAllActiveTowns() {
@@ -23,25 +26,23 @@ public class TownService {
     }
 
     public TownResponse getTownBySlug(String slug) {
-        Town town = townRepository.findBySlugAndActiveTrue(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
-
+        Town town = findActiveTownBySlug(slug);
         return mapToResponse(town);
     }
 
     public Town findActiveTownBySlug(String slug) {
         return townRepository.findBySlugAndActiveTrue(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_SLUG + slug));
     }
 
     public Town findTownById(Long id) {
         return townRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_ID + id));
     }
 
     public Town findTownBySlug(String slug) {
         return townRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Pueblo no encontrado: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException(TOWN_NOT_FOUND_BY_SLUG + slug));
     }
 
     public TownResponse mapToResponse(Town town) {
